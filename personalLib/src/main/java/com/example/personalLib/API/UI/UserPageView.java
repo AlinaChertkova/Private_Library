@@ -2,9 +2,12 @@ package com.example.personalLib.API.UI;
 
 import com.example.personalLib.API.Data.AuthorData;
 import com.example.personalLib.API.Data.ReadBookData;
+import com.example.personalLib.API.Data.UserData;
 import com.example.personalLib.Domain.Exceptions.UserNotFoundException;
 import com.example.personalLib.Domain.Services.Reader.ReaderService;
 import com.example.personalLib.Domain.Util.ReadBookConverter;
+import com.example.personalLib.Domain.Util.UserConverter;
+import com.example.personalLib.Security.UserCheck;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
@@ -40,6 +43,12 @@ public class UserPageView extends VerticalLayout implements HasUrlParameter<Stri
     public void setParameter(BeforeEvent event, String parameter) {
 
         try {
+            userId = Long.valueOf(parameter);
+            UserData curUser = UserConverter.convertToUserDTO(readerService.getUserByLogin(UserCheck.getCurrentUserLogin()));
+            if (userId != curUser.getId())
+            {
+                throw new Exception ("Доступ невозможен!");
+            }
             HorizontalLayout links = new HorizontalLayout();
             if (hasUserRole())
             {
@@ -55,16 +64,12 @@ public class UserPageView extends VerticalLayout implements HasUrlParameter<Stri
             else {
                 Button enter = new Button("Войти");
                 enter.addClickListener(b ->  enter.getUI().ifPresent(ui -> ui.navigate("login")));
-                //Anchor enter = new Anchor("login", "Войти");
                 links.add(enter);
             }
 
             Button catalog = new Button("Каталог");
             catalog.addClickListener(b ->  catalog.getUI().ifPresent(ui -> ui.navigate("")));
-            //Anchor catalogLink = new Anchor("", "Каталог");
             links.add(catalog);
-
-            userId = Long.valueOf(parameter);
 
             grid = new Grid<>();
 
@@ -146,7 +151,7 @@ public class UserPageView extends VerticalLayout implements HasUrlParameter<Stri
             setListOfBooks();
 
             add(links, grid, deleteButton);
-        } catch (UserNotFoundException e) {
+        } catch ( Exception e) {
             Notification.show(e.getMessage(), 3000, Notification.Position.MIDDLE);
         }
     }

@@ -167,7 +167,6 @@ public class BookView extends VerticalLayout implements HasUrlParameter<String> 
         reviews.addColumn(review -> getUserLogin(review)).setHeader("Автор отзыва");
         reviews.addColumn(ReviewData::getText).setHeader("Отзыв");
         reviews.addColumn(ReviewData::getMark).setHeader("Оценка").setWidth("12px");
-        //reviews.addColumn(ReviewData::getPublishingDate).setHeader("Дата");
         reviews.addColumn(r -> dateFormat(r.getPublishingDate())).setHeader("Дата");
         reviews.addColumn(new NativeButtonRenderer<> ("Изменить", clickedItem -> {
             try {

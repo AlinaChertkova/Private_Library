@@ -56,7 +56,6 @@ public class FindView extends VerticalLayout implements HasUrlParameter<String> 
             UserData curUser = UserConverter.convertToUserDTO(readerService.getUserByLogin(UserCheck.getCurrentUserLogin()));
             Button linkToMyBooks = new Button("Прочитанное");
             linkToMyBooks.addClickListener(b ->  linkToMyBooks.getUI().ifPresent(ui -> ui.navigate(String.format("mybooks/%s", curUser.getId().toString()))));
-            //Anchor link = new Anchor("mybooks/" + curUser.getId(), "Мои книги");
             links.add(exit, linkToMyBooks);
         }
         else {
