@@ -15,11 +15,11 @@ public class AuthorModel {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(name = "Name", nullable = false)
+    @Column(name = "Name", nullable = false, unique = true)
     private String name;
 
     @Lob
-    @Column(name = "Description", columnDefinition = "CLOB")
+    @Column(name = "Description", columnDefinition = "text")
     private String description;
 
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "bookAuthors")

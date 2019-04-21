@@ -20,7 +20,7 @@ public class ReviewModel {
     private Long id;
 
     @Lob
-    @Column(name = "Text", nullable = false, columnDefinition = "CLOB")
+    @Column(name = "Text", nullable = false, columnDefinition = "TEXT")
     private String text;
 
     //@Column(name = "User", nullable = false)

@@ -16,6 +16,15 @@ public class UserCheck {
         return false;
     }
 
+    public static boolean hasAdminRole()
+    {
+        SecurityContext sc = SecurityContextHolder.getContext();
+        Authentication authentication = sc.getAuthentication();
+        if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("ADMIN")))
+            return true;
+        return false;
+    }
+
     public static String getCurrentUserLogin()
     {
         SecurityContext sc = SecurityContextHolder.getContext();

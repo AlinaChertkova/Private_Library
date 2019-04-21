@@ -20,7 +20,7 @@ public class PublishingModel {
     private String name;
 
     @Lob
-    @Column(name = "Description", nullable = true, columnDefinition = "CLOB")
+    @Column(name = "Description", nullable = true, columnDefinition = "TEXT")
     private String description ;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "publishing")

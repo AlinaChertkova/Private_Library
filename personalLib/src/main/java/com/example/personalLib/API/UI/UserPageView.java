@@ -4,6 +4,7 @@ import com.example.personalLib.API.Data.AuthorData;
 import com.example.personalLib.API.Data.ReadBookData;
 import com.example.personalLib.API.Data.UserData;
 import com.example.personalLib.Domain.Exceptions.UserNotFoundException;
+import com.example.personalLib.Domain.Services.Admin.AdminService;
 import com.example.personalLib.Domain.Services.Reader.ReaderService;
 import com.example.personalLib.Domain.Util.ReadBookConverter;
 import com.example.personalLib.Domain.Util.UserConverter;
@@ -16,6 +17,8 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
+import com.vaadin.flow.component.textfield.TextArea;
+import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.renderer.NativeButtonRenderer;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
@@ -28,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
 
+import static com.example.personalLib.Security.UserCheck.hasAdminRole;
 import static com.example.personalLib.Security.UserCheck.hasUserRole;
 
 @Route("mybooks")
@@ -35,6 +39,8 @@ public class UserPageView extends VerticalLayout implements HasUrlParameter<Stri
 
     @Autowired
     private ReaderService readerService;
+    @Autowired
+    private AdminService adminService;
 
     private Long userId;
     private Grid<ReadBookData> grid;
@@ -60,6 +66,27 @@ public class UserPageView extends VerticalLayout implements HasUrlParameter<Stri
                         ui.navigate("login/loggedout");
                 }));
                 links.add(exit);
+                if (hasAdminRole())
+                {
+                    Button addAuthorBut = new Button("Добавить автора");
+                    addAuthorBut.addClickListener( e -> addAuthorBut.getUI().ifPresent(ui -> {
+                        Dialog addAuthorDialog = new Dialog();
+                        addAuthorDialog.open();
+                        addAuthorDialog.setCloseOnEsc(true);
+                        addAuthorDialog.setCloseOnOutsideClick(true);
+                        TextField name = new TextField("Имя автора");
+                        TextArea text = new TextArea("Описание автора");
+                        text.setSizeUndefined();
+                        text.setWidth("100%");
+                        text.setHeight("300px");
+                        Button add = new Button("Сохранить");
+                        add.addClickListener(b ->  adminService.addAuthor(text.getValue(), name.getValue()));
+                        VerticalLayout vl = new VerticalLayout();
+                        vl.add(name, text, add);
+                        addAuthorDialog.add(name, text, add);
+                    }));
+                    links.add(addAuthorBut);
+                }
             }
             else {
                 Button enter = new Button("Войти");

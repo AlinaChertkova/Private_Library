@@ -18,6 +18,9 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinSession;
+import com.vaadin.flow.theme.Theme;
+import com.vaadin.flow.theme.lumo.Lumo;
+import com.vaadin.flow.theme.material.Material;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -25,6 +28,7 @@ import java.util.*;
 
 import static com.example.personalLib.Security.UserCheck.hasUserRole;
 
+@Theme(Material.class)
 @Route("")
 public class CatalogView extends VerticalLayout {
 

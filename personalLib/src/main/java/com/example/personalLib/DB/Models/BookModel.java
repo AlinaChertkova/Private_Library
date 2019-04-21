@@ -27,7 +27,7 @@ public class BookModel {
     private String title;
 
     @Lob
-    @Column(name = "Description", nullable = false, columnDefinition = "CLOB")
+    @Column(name = "Description", nullable = false, columnDefinition = "TEXT")
     private String description;
 
     @Column(name = "cover", nullable = false)

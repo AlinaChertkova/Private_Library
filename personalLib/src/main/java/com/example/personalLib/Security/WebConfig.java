@@ -1,11 +1,11 @@
-package com.example.personalLib.Security;
+/*package com.example.personalLib.Security;
 
 import com.example.personalLib.DB.Models.*;
 import com.example.personalLib.DB.Repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
-import org.h2.server.web.WebServlet;
+//import org.h2.server.web.WebServlet;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
@@ -106,3 +106,4 @@ public class WebConfig {
         reviewRepository.save(review);
     }
 }
+*/
