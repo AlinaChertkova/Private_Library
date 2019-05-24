@@ -9,12 +9,11 @@ import com.example.personalLib.Domain.Util.BookConverter;
 import com.example.personalLib.Domain.Util.GenreConverter;
 import com.example.personalLib.Domain.Util.ReviewConverter;
 import com.example.personalLib.Domain.Util.UserConverter;
-import com.example.personalLib.Security.UserCheck;
+import com.example.personalLib.Security.UserSecurityUtil;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
@@ -22,7 +21,6 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.textfield.TextArea;
-import com.vaadin.flow.data.renderer.LocalDateRenderer;
 import com.vaadin.flow.data.renderer.NativeButtonRenderer;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
@@ -34,7 +32,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.StringJoiner;
 
-import static com.example.personalLib.Security.UserCheck.hasUserRole;
+import static com.example.personalLib.Security.UserSecurityUtil.hasUserRole;
 
 @Route("book")
 public class BookView extends VerticalLayout implements HasUrlParameter<String> {
@@ -78,7 +76,7 @@ public class BookView extends VerticalLayout implements HasUrlParameter<String> 
 
         if (isAuthorised)
         {
-            curUser = UserConverter.convertToUserDTO(readerService.getUserByLogin(UserCheck.getCurrentUserLogin()));
+            curUser = UserConverter.convertToUserDTO(readerService.getUserByLogin(UserSecurityUtil.getCurrentUserLogin()));
             Button linkToMyBooks = new Button("Прочитанное");
             linkToMyBooks.addClickListener(b ->  linkToMyBooks.getUI().ifPresent(ui -> ui.navigate(String.format("mybooks/%s", curUser.getId().toString()))));
             links.add(linkToMyBooks);

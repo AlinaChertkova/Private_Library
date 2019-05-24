@@ -31,9 +31,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/", "/registration", "/VAADIN/**"
-                        , "/login", "/login**", "/login/**", "/h2-console/**", "/book/**", "/frontend/**", "/find/**", "/review/**",
-                        "/h2-console",
-                        // (development mode) static resources
+                        , "/login", "/login**", "/login/**", "/book/**", "/frontend/**", "/find/**", "/review/**"
+                        , "/test",
                         "/frontend/**").permitAll()
                 //.requestMatchers(SecurityUtils::isFrameworkInternalRequest).permitAll()
                 // deny other URLs until authenticated

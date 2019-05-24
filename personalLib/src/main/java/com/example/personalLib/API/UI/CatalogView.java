@@ -1,12 +1,11 @@
 package com.example.personalLib.API.UI;
 
-import com.example.personalLib.API.Data.AuthorData;
 import com.example.personalLib.API.Data.BookData;
 import com.example.personalLib.API.Data.UserData;
 import com.example.personalLib.Domain.Services.Reader.ReaderService;
 import com.example.personalLib.Domain.Util.BookConverter;
 import com.example.personalLib.Domain.Util.UserConverter;
-import com.example.personalLib.Security.UserCheck;
+import com.example.personalLib.Security.UserSecurityUtil;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
@@ -19,14 +18,13 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.theme.Theme;
-import com.vaadin.flow.theme.lumo.Lumo;
 import com.vaadin.flow.theme.material.Material;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.*;
 
-import static com.example.personalLib.Security.UserCheck.hasUserRole;
+import static com.example.personalLib.Security.UserSecurityUtil.hasUserRole;
 
 @Theme(Material.class)
 @Route("")
@@ -37,10 +35,16 @@ public class CatalogView extends VerticalLayout {
 
     private TextField searchField;
     private Button searchButton;
+    private Button testRoutingButton;
 
     public CatalogView(ReaderService readerService) {
 
         HorizontalLayout links = new HorizontalLayout();
+        testRoutingButton = new Button("test");
+
+       /* testRoutingButton.addClickListener(e-> searchButton.getUI().ifPresent
+                (ui->ui.navigate("test")));*/
+
         if (hasUserRole())
         {
             Button exit = new Button("Выйти", event -> searchButton.getUI().ifPresent(ui -> {
@@ -49,7 +53,7 @@ public class CatalogView extends VerticalLayout {
                     ui.getSession().close();
                     ui.navigate("login/loggedout");
             }));
-            UserData curUser = UserConverter.convertToUserDTO(readerService.getUserByLogin(UserCheck.getCurrentUserLogin()));
+            UserData curUser = UserConverter.convertToUserDTO(readerService.getUserByLogin(UserSecurityUtil.getCurrentUserLogin()));
             Button link = new Button("Мои книги");
             link.addClickListener(b ->  link.getUI().ifPresent(ui -> ui.navigate("mybooks/" + curUser.getId())));
             links.add(exit, link);
@@ -73,7 +77,7 @@ public class CatalogView extends VerticalLayout {
         searchField.addKeyPressListener(Key.ENTER, listener -> searchButton.getUI().ifPresent
                 (ui->ui.navigate(String.format("find/%s", searchField.getValue().trim()))));
 
-        add(links, searchField, searchButton);
+        add(links, searchField, searchButton, testRoutingButton);
 
         List <BookData> books = BookConverter.convertToBookDTOList(readerService.getAllBooks());
 

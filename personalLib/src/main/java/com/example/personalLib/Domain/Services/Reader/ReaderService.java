@@ -1,5 +1,7 @@
 package com.example.personalLib.Domain.Services.Reader;
 
+import com.example.personalLib.DB.Models.Role;
+import com.example.personalLib.DB.Models.UserModel;
 import com.example.personalLib.Domain.Exceptions.BookNotFoundException;
 import com.example.personalLib.Domain.Exceptions.ReadBookNotFoundException;
 import com.example.personalLib.Domain.Exceptions.ReviewNotFoundException;
@@ -8,6 +10,7 @@ import com.example.personalLib.Domain.Model.*;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -124,8 +127,38 @@ public interface ReaderService {
      * @return обновленная рецензия
      * @throws ReviewNotFoundException
      */
-
     Review updateReview(Long id, String text, Double newMark) throws ReviewNotFoundException;
 
+    /**
+     * Удалить рецензию
+     * @param id идентификатор рецензии
+     * @throws ReviewNotFoundException
+     */
     void deleteReview(Long id) throws ReviewNotFoundException;
+
+    /**
+     * Получить все рецензии пользователя по идентиф
+     * @param userId идентификатор пользователя
+     * @return список рецензий
+     * @throws UserNotFoundException
+     */
+    List<Review> getAllReviewsByUserId(Long userId) throws UserNotFoundException;
+
+    /**
+     * Обновить данные пользователя
+     * @param id идентификатор пользователя
+     * @param login новый логин
+     * @param name новое имя
+     * @param password новый пароль
+     * @return нового пользователя
+     * @throws UserNotFoundException
+     */
+    User updateUser(Long id, String login, String name, String password) throws UserNotFoundException;
+
+    /**
+     * Удалить пользователя
+     * @param id идентификатор пользователя
+     * @throws UserNotFoundException
+     */
+    void deleteUser(Long id) throws UserNotFoundException;
 }

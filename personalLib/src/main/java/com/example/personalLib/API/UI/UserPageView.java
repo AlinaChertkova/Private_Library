@@ -1,6 +1,5 @@
 package com.example.personalLib.API.UI;
 
-import com.example.personalLib.API.Data.AuthorData;
 import com.example.personalLib.API.Data.ReadBookData;
 import com.example.personalLib.API.Data.UserData;
 import com.example.personalLib.Domain.Exceptions.UserNotFoundException;
@@ -8,11 +7,10 @@ import com.example.personalLib.Domain.Services.Admin.AdminService;
 import com.example.personalLib.Domain.Services.Reader.ReaderService;
 import com.example.personalLib.Domain.Util.ReadBookConverter;
 import com.example.personalLib.Domain.Util.UserConverter;
-import com.example.personalLib.Security.UserCheck;
+import com.example.personalLib.Security.UserSecurityUtil;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -31,8 +29,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
 
-import static com.example.personalLib.Security.UserCheck.hasAdminRole;
-import static com.example.personalLib.Security.UserCheck.hasUserRole;
+import static com.example.personalLib.Security.UserSecurityUtil.hasAdminRole;
+import static com.example.personalLib.Security.UserSecurityUtil.hasUserRole;
 
 @Route("mybooks")
 public class UserPageView extends VerticalLayout implements HasUrlParameter<String> {
@@ -50,7 +48,7 @@ public class UserPageView extends VerticalLayout implements HasUrlParameter<Stri
 
         try {
             userId = Long.valueOf(parameter);
-            UserData curUser = UserConverter.convertToUserDTO(readerService.getUserByLogin(UserCheck.getCurrentUserLogin()));
+            UserData curUser = UserConverter.convertToUserDTO(readerService.getUserByLogin(UserSecurityUtil.getCurrentUserLogin()));
             if (userId != curUser.getId())
             {
                 throw new Exception ("Доступ невозможен!");

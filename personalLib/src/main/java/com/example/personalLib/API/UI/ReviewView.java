@@ -1,6 +1,5 @@
 package com.example.personalLib.API.UI;
 
-import com.example.personalLib.API.Data.AuthorData;
 import com.example.personalLib.API.Data.BookData;
 import com.example.personalLib.API.Data.ReviewData;
 import com.example.personalLib.API.Data.UserData;
@@ -8,9 +7,8 @@ import com.example.personalLib.Domain.Exceptions.ReviewNotFoundException;
 import com.example.personalLib.Domain.Services.Reader.ReaderService;
 import com.example.personalLib.Domain.Util.ReviewConverter;
 import com.example.personalLib.Domain.Util.UserConverter;
-import com.example.personalLib.Security.UserCheck;
+import com.example.personalLib.Security.UserSecurityUtil;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -25,7 +23,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.StringJoiner;
 
-import static com.example.personalLib.Security.UserCheck.hasUserRole;
+import static com.example.personalLib.Security.UserSecurityUtil.hasUserRole;
 
 @Route("review")
 public class ReviewView extends VerticalLayout implements HasUrlParameter<String> {
@@ -55,7 +53,7 @@ public class ReviewView extends VerticalLayout implements HasUrlParameter<String
                     ui.getSession().close();
                     ui.navigate("login/loggedout");
             }));
-            UserData curUser = UserConverter.convertToUserDTO(readerService.getUserByLogin(UserCheck.getCurrentUserLogin()));
+            UserData curUser = UserConverter.convertToUserDTO(readerService.getUserByLogin(UserSecurityUtil.getCurrentUserLogin()));
             Button linkToMyBooks = new Button("Прочитанное");
             linkToMyBooks.addClickListener(b ->  linkToMyBooks.getUI().ifPresent(ui -> ui.navigate(String.format("mybooks/%s", curUser.getId().toString()))));
             links.add(exit, linkToMyBooks);

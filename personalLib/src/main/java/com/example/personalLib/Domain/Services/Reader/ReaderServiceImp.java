@@ -46,10 +46,7 @@ public class ReaderServiceImp implements ReaderService{
 
     @Override
     public List<Book> getAllBooks() {
-        return /*StreamSupport.stream(bookRepository.findAll().spliterator(), false)
-                .map(BookConverter::convertToBookDomain)
-                .collect(Collectors.toList());*/
-                bookRepository.findAll().stream().map(BookConverter::convertToBookDomain)
+        return bookRepository.findAll().stream().map(BookConverter::convertToBookDomain)
                 .collect(Collectors.toList());
     }
 
@@ -163,5 +160,31 @@ public class ReaderServiceImp implements ReaderService{
             throw new ReviewNotFoundException(id);
         }
         else reviewRepository.deleteById(id);
+    }
+
+    @Override
+    public List<Review> getAllReviewsByUserId(Long userId) throws UserNotFoundException {
+        if (userRepository.existsById(userId))
+        {
+            return ReviewConverter.convertToReviewDomainList(reviewRepository.findByUserId(userId));
+        }
+        else throw new UserNotFoundException(userId);
+    }
+
+    @Override
+    public User updateUser(Long id, String login, String name, String password) throws UserNotFoundException {
+        final UserModel user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
+
+        user.setLogin(login);
+        user.setName(name);
+        user.setPassword(password);
+        return UserConverter.convertToUserDomain(userRepository.save(user));
+    }
+
+    @Override
+    public void deleteUser(Long id) throws UserNotFoundException {
+        final UserModel user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
+
+        userRepository.deleteById(id);
     }
 }

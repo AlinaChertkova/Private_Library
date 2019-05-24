@@ -1,15 +1,13 @@
 package com.example.personalLib.API.UI;
 
-import com.example.personalLib.API.Data.AuthorData;
 import com.example.personalLib.API.Data.BookData;
 import com.example.personalLib.API.Data.UserData;
 import com.example.personalLib.Domain.Services.Reader.ReaderService;
 import com.example.personalLib.Domain.Util.BookConverter;
 import com.example.personalLib.Domain.Util.UserConverter;
-import com.example.personalLib.Security.UserCheck;
+import com.example.personalLib.Security.UserSecurityUtil;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.Text;
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Image;
@@ -27,7 +25,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import java.util.List;
 import java.util.StringJoiner;
 
-import static com.example.personalLib.Security.UserCheck.hasUserRole;
+import static com.example.personalLib.Security.UserSecurityUtil.hasUserRole;
 
 @Route("find")
 public class FindView extends VerticalLayout implements HasUrlParameter<String> {
@@ -53,7 +51,7 @@ public class FindView extends VerticalLayout implements HasUrlParameter<String> 
                     ui.getSession().close();
                     ui.navigate("login/loggedout");
             }));
-            UserData curUser = UserConverter.convertToUserDTO(readerService.getUserByLogin(UserCheck.getCurrentUserLogin()));
+            UserData curUser = UserConverter.convertToUserDTO(readerService.getUserByLogin(UserSecurityUtil.getCurrentUserLogin()));
             Button linkToMyBooks = new Button("Прочитанное");
             linkToMyBooks.addClickListener(b ->  linkToMyBooks.getUI().ifPresent(ui -> ui.navigate(String.format("mybooks/%s", curUser.getId().toString()))));
             links.add(exit, linkToMyBooks);

@@ -22,6 +22,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
+import java.util.List;
+
 @Service
 public class AdminServiceImp implements AdminService {
 
@@ -59,18 +61,26 @@ public class AdminServiceImp implements AdminService {
                 authorRepository.save(new AuthorModel(description, name)));
     }
 
-    @Override
-    public Book addBook(String isbn, String title, String description, String coverLink, Collection<Long> authorsIds) {
-       return null;
-       /* return BookConverter.convertToBookDomain(
-                bookRepository.save(new BookModel(isbn, title, description,  name)));*/
+   /* @Override
+    public Book addBook(String isbn, String title, String description, String coverLink, List<AuthorModel> authors) {
+
+        BookModel model = new BookModel(isbn, title, description,  coverLink, 0);
+        model.setBookAuthors(authors);
+        return BookConverter.convertToBookDomain(bookRepository.save(model));
     }
 
     @Override
-    public Book updateBook(Long id, String isbn, String title, String description, String coverLink, Collection<Long> authorsIds) {
+    public Book updateBook(Long id, String isbn, String title, String description, String coverLink, List<AuthorModel> authors, double avgRating) throws BookNotFoundException {
 
-        return null;
-    }
+        final BookModel book = bookRepository.findById(id).orElseThrow(() -> new BookNotFoundException(id));
+
+        book.setISBN(isbn);
+        book.setTitle(title);
+        book.setCoverLink(coverLink);
+        book.setBookAuthors(authors);
+        book.setDescription(description);
+        return BookConverter.convertToBookDomain(bookRepository.save(book));
+    }*/
 
     @Override
     public Author updateAuthor(Long id, String description, String name) throws AuthorNotFoundException {

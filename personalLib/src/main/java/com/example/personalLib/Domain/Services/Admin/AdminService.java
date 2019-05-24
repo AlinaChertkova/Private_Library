@@ -1,5 +1,6 @@
 package com.example.personalLib.Domain.Services.Admin;
 
+import com.example.personalLib.DB.Models.AuthorModel;
 import com.example.personalLib.Domain.Exceptions.AuthorNotFoundException;
 import com.example.personalLib.Domain.Exceptions.BookNotFoundException;
 import com.example.personalLib.Domain.Exceptions.ReviewNotFoundException;
@@ -9,6 +10,7 @@ import com.example.personalLib.Domain.Model.Genre;
 import javafx.print.Collation;
 
 import java.util.Collection;
+import java.util.List;
 
 public interface AdminService {
 
@@ -37,10 +39,10 @@ public interface AdminService {
      * @param title Название книги
      * @param description Описаие книги
      * @param coverLink Ссылка на обложку
-     * @param authorsIds Список идентификаторов аврторов
+     * @param authors Список аврторов
      * @return Книга
      */
-    Book addBook(String isbn, String title, String description, String coverLink, Collection<Long> authorsIds);
+    //Book addBook(String isbn, String title, String description, String coverLink, List<AuthorModel> authors);
 
     /**
      * Обновить информацию о книге
@@ -48,10 +50,11 @@ public interface AdminService {
      * @param title название книги
      * @param description описание книги
      * @param coverLink ссылка на обложку
-     * @param authorsIds список идентификаторов авторов
+     * @param authors список авторов
+     * @param avgRating новый средний рейтинг
      * @return книга
      */
-    Book updateBook(Long id, String isbn, String title, String description, String coverLink, Collection<Long> authorsIds);
+    //Book updateBook(Long id, String isbn, String title, String description, String coverLink, List<AuthorModel> authors, double avgRating) throws BookNotFoundException;
 
     /**
      * Обновить информацию об авторе
