@@ -8,6 +8,7 @@ import com.example.personalLib.Domain.Services.Reader.ReaderService;
 import com.example.personalLib.Domain.Util.ReviewConverter;
 import com.example.personalLib.Domain.Util.UserConverter;
 import com.example.personalLib.Security.UserSecurityUtil;
+import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
@@ -23,6 +24,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.StringJoiner;
 
+import static com.example.personalLib.API.PageComponents.getHeader;
 import static com.example.personalLib.Security.UserSecurityUtil.hasUserRole;
 
 @Route("review")
@@ -43,29 +45,10 @@ public class ReviewView extends VerticalLayout implements HasUrlParameter<String
 
         reviewId = Long.valueOf(parameter);
 
-        HorizontalLayout links = new HorizontalLayout();
-        if (hasUserRole())
-        {
-            Button exit = new Button("Выйти");
-            exit.addClickListener( e -> exit.getUI().ifPresent(ui -> {
-                    SecurityContextHolder.clearContext();
-                    VaadinSession.getCurrent().close();
-                    ui.getSession().close();
-                    ui.navigate("login/loggedout");
-            }));
-            UserData curUser = UserConverter.convertToUserDTO(readerService.getUserByLogin(UserSecurityUtil.getCurrentUserLogin()));
-            Button linkToMyBooks = new Button("Прочитанное");
-            linkToMyBooks.addClickListener(b ->  linkToMyBooks.getUI().ifPresent(ui -> ui.navigate(String.format("mybooks/%s", curUser.getId().toString()))));
-            links.add(exit, linkToMyBooks);
-        }
-        else {
-            Button enter = new Button("Войти");
-            enter.addClickListener(b ->  enter.getUI().ifPresent(ui -> ui.navigate("login")));
-            links.add(enter);
-        }
-        Button catalog = new Button("Каталог");
-        catalog.addClickListener(b ->  catalog.getUI().ifPresent(ui -> ui.navigate("")));
-        links.add(catalog);
+        AppLayout appLayout = new AppLayout();
+        appLayout = getHeader(readerService);
+        VerticalLayout mainLayout = new VerticalLayout();
+
         try {
             currentReview = ReviewConverter.convertToReviewDTO(readerService.getReviewById(reviewId));
             reviewAuthorLabel = new Label();
@@ -88,7 +71,9 @@ public class ReviewView extends VerticalLayout implements HasUrlParameter<String
             reviewText.setWidth("80%");
             reviewText.setReadOnly(true);
 
-            add(links, reviewAuthorLabel, bookTitleLabel, bookAuthorLabel, markLabel, reviewText);
+            mainLayout.add(reviewAuthorLabel, bookTitleLabel, bookAuthorLabel, markLabel, reviewText);
+            appLayout.setContent(mainLayout);
+            add(appLayout);
         } catch (ReviewNotFoundException e) {
             Notification.show(e.getMessage(), 2000, Notification.Position.MIDDLE);
         }

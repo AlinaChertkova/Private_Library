@@ -13,8 +13,10 @@ import com.example.personalLib.Domain.Exceptions.UserNotFoundException;
 import com.example.personalLib.Domain.Model.*;
 import com.example.personalLib.Domain.Util.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.Cacheable;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;

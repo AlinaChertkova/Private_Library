@@ -39,7 +39,7 @@ public class UserModel {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "regDate")
+    @Column(name = "reg_date")
     private LocalDateTime registrationDate;
 
     private boolean active;

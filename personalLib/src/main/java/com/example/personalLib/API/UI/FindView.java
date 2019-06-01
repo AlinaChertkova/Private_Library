@@ -8,6 +8,7 @@ import com.example.personalLib.Domain.Util.UserConverter;
 import com.example.personalLib.Security.UserSecurityUtil;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.Text;
+import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Image;
@@ -17,6 +18,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
+import com.vaadin.flow.router.OptionalParameter;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import java.util.List;
 import java.util.StringJoiner;
 
+import static com.example.personalLib.API.PageComponents.getHeader;
 import static com.example.personalLib.Security.UserSecurityUtil.hasUserRole;
 
 @Route("find")
@@ -38,62 +41,61 @@ public class FindView extends VerticalLayout implements HasUrlParameter<String> 
     private VerticalLayout bookList = new VerticalLayout();
 
     @Override
-    public void setParameter(BeforeEvent event, String parameter) {
+    public void setParameter(BeforeEvent event, @OptionalParameter String parameter) {
+
+        AppLayout appLayout = new AppLayout();
+        appLayout = getHeader(readerService);
 
         bookList.removeAll();
 
-        HorizontalLayout links = new HorizontalLayout();
-        if (hasUserRole())
-        {
-            Button exit = new Button("Выйти", e -> searchButton.getUI().ifPresent(ui -> {
-                    SecurityContextHolder.clearContext();
-                    VaadinSession.getCurrent().close();
-                    ui.getSession().close();
-                    ui.navigate("login/loggedout");
-            }));
-            UserData curUser = UserConverter.convertToUserDTO(readerService.getUserByLogin(UserSecurityUtil.getCurrentUserLogin()));
-            Button linkToMyBooks = new Button("Прочитанное");
-            linkToMyBooks.addClickListener(b ->  linkToMyBooks.getUI().ifPresent(ui -> ui.navigate(String.format("mybooks/%s", curUser.getId().toString()))));
-            links.add(exit, linkToMyBooks);
-        }
-        else {
-            Button enter = new Button("Войти");
-            enter.addClickListener(b ->  enter.getUI().ifPresent(ui -> ui.navigate("login")));
-           // Anchor enter = new Anchor("login", "Войти");
-            links.add(enter);
-        }
-        Button catalog = new Button("Каталог");
-        catalog.addClickListener(b ->  catalog.getUI().ifPresent(ui -> ui.navigate("")));
-        //Anchor catalog = new Anchor("", "Каталог");
-        links.add(catalog);
-
-        String searchParam = parameter;
-
         searchField = new TextField();
-        searchField.setLabel("Поиск");
+        searchField.setWidth("50%");
+        searchField.setPlaceholder("Поиск");
 
+        HorizontalLayout search = new HorizontalLayout();
         searchButton = new Button();
         searchButton.setText("Найти");
 
-        bookList.add(links);
-        bookList.add(searchField, searchButton);
+        search.add(searchField, searchButton);
 
-        searchButton.addClickListener(e -> searchButton.getUI().ifPresent
+        if (parameter == null)
+        {
+            Image image = new Image("frontend/404.png", "Image");
+            image.setWidth("100%");
+
+            searchButton.addClickListener(e -> searchButton.getUI().ifPresent
                     (ui->ui.navigate(String.format("find/%s", searchField.getValue().trim()))));
 
-        searchField.addKeyPressListener(Key.ENTER, listener ->
-            searchButton.getUI().ifPresent(ui -> ui.navigate(String.format("find/%s", searchField.getValue().trim()))));
+            searchField.addKeyPressListener(Key.ENTER, listener ->
+                    searchButton.getUI().ifPresent(ui -> ui.navigate(String.format("find/%s", searchField.getValue().trim()))));
 
-        List<BookData> books = BookConverter.convertToBookDTOList(readerService.getBooksByTitle(searchParam));
-        books.addAll(BookConverter.convertToBookDTOList(readerService.getBooksByAuthorName(searchParam)));
-        books.addAll(BookConverter.convertToBookDTOList(readerService.getBookByISBN(searchParam)));
+            bookList.add(searchField, searchButton, image);
+            appLayout.setContent(bookList);
+            add(appLayout);
+        }
+        else{
+            String searchParam = parameter;
 
-        for(BookData book : books)
-        {
-            bookList.add(setListOfBooks(book));
+            bookList.add(searchField, searchButton);
+
+            searchButton.addClickListener(e -> searchButton.getUI().ifPresent
+                    (ui->ui.navigate(String.format("find/%s", searchField.getValue().trim()))));
+
+            searchField.addKeyPressListener(Key.ENTER, listener ->
+                    searchButton.getUI().ifPresent(ui -> ui.navigate(String.format("find/%s", searchField.getValue().trim()))));
+
+            List<BookData> books = BookConverter.convertToBookDTOList(readerService.getBooksByTitle(searchParam));
+            books.addAll(BookConverter.convertToBookDTOList(readerService.getBooksByAuthorName(searchParam)));
+            books.addAll(BookConverter.convertToBookDTOList(readerService.getBookByISBN(searchParam)));
+
+            for(BookData book : books)
+            {
+                bookList.add(setListOfBooks(book));
+            }
+            appLayout.setContent(bookList);
+            add(appLayout);
         }
 
-        add(bookList);
     }
 
     private HorizontalLayout setListOfBooks(BookData book){

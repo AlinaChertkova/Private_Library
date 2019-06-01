@@ -6,10 +6,12 @@ import com.example.personalLib.Domain.Exceptions.UserNotFoundException;
 import com.example.personalLib.Domain.Model.Review;
 import com.example.personalLib.Domain.Services.Reader.ReaderService;
 import com.example.personalLib.Domain.Util.UserConverter;
+import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.checkbox.CheckboxGroup;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.textfield.TextArea;
@@ -23,6 +25,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.time.LocalDateTime;
+
+import static com.example.personalLib.API.PageComponents.getHeader;
 
 @Route("create")
 public class CreateReviewView extends VerticalLayout implements HasUrlParameter<String> {
@@ -38,6 +42,10 @@ public class CreateReviewView extends VerticalLayout implements HasUrlParameter<
     public void setParameter(BeforeEvent event, String parameter) {
         bookId = Long.valueOf(parameter);
 
+        AppLayout appLayout = new AppLayout();
+        appLayout = getHeader(readerService);
+        VerticalLayout mainLayout = new VerticalLayout();
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (!(authentication instanceof AnonymousAuthenticationToken)) {
             String currentUserName = authentication.getName();
@@ -50,7 +58,7 @@ public class CreateReviewView extends VerticalLayout implements HasUrlParameter<
         text = new TextArea();
         text.setLabel("Введите текст рецензии");
 
-        text.setWidth("900px");
+        text.setWidth("500px");
         text.setHeight("500px");
 
         saveButton = new Button();
@@ -60,6 +68,7 @@ public class CreateReviewView extends VerticalLayout implements HasUrlParameter<
         mark.setItems(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0);
         mark.setLabel("Оценка книги");
 
+        HorizontalLayout buttons = new HorizontalLayout();
         saveButton.addClickListener(e ->
         {
             try {
@@ -76,6 +85,9 @@ public class CreateReviewView extends VerticalLayout implements HasUrlParameter<
             }
         });
 
-        add(back, text, mark, saveButton);
+        buttons.add(saveButton, back);
+        mainLayout.add(text, mark, buttons);
+        appLayout.setContent(mainLayout);
+        add(appLayout);
     }
 }

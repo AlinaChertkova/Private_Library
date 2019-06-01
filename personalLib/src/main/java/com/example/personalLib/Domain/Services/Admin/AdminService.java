@@ -1,15 +1,11 @@
 package com.example.personalLib.Domain.Services.Admin;
 
-import com.example.personalLib.DB.Models.AuthorModel;
 import com.example.personalLib.Domain.Exceptions.AuthorNotFoundException;
 import com.example.personalLib.Domain.Exceptions.BookNotFoundException;
 import com.example.personalLib.Domain.Exceptions.ReviewNotFoundException;
 import com.example.personalLib.Domain.Model.Author;
-import com.example.personalLib.Domain.Model.Book;
 import com.example.personalLib.Domain.Model.Genre;
-import javafx.print.Collation;
 
-import java.util.Collection;
 import java.util.List;
 
 public interface AdminService {
@@ -76,4 +72,11 @@ public interface AdminService {
      * @return жанр
      */
     Genre addGenre (String name);
+
+    /**
+     * Получить статистику ргистраций по месяцам
+     * @param year год
+     * @return список значений
+     */
+    List<Long> getUserStatistics(Integer year);
 }

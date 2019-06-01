@@ -3,19 +3,26 @@ package com.example.personalLib.DB;
 import com.example.personalLib.DB.Models.*;
 import com.example.personalLib.DB.Repository.*;
 import com.example.personalLib.Domain.Model.Genre;
+import com.example.personalLib.Domain.Services.Reader.ReaderService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.ehcache.EhCacheCache;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDateTime;
 import java.util.*;
 
+import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace.NONE;
+
 @RunWith(SpringRunner.class)
 @DataJpaTest
+@AutoConfigureTestDatabase(replace = NONE)
 public class BookRepTest {
 
     @Autowired
@@ -333,4 +340,21 @@ public class BookRepTest {
         Assert.assertEquals(bookRepository.findDistinctByBookAuthorsNameContainingIgnoreCase("Alina").size(), 2);
         Assert.assertEquals(bookRepository.findDistinctByBookAuthorsNameContainingIgnoreCase("Chertkova").size(), 1);
     }
+
+    @Test
+    public void testCash(){
+//        CacheManager cacheManager = new CacheManager(new Configuration().name("EhCacheCacheTests").defaultCache(new CacheConfiguration("default", 100)));
+//        net.sf.ehcache.Cache nativeCache = new net.sf.ehcache.Cache(new CacheConfiguration("com.example.personalLib.DB.Models.BookModel", 100));
+//        cacheManager.addCache(nativeCache);
+
+       /* BookModel foo = new BookModel();
+
+        bookRepository.findById(31L).get();
+        List<CacheManager> cash = CacheManager.ALL_CACHE_MANAGERS;
+        int size = cash.get(0)
+                .getCache("com.example.personalLib.DB.Models.BookModel").getSize();
+        Assert.assertTrue(size  > 0 );*/
+    }
+
 }
+

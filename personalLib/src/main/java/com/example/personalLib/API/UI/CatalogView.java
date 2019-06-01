@@ -1,13 +1,11 @@
 package com.example.personalLib.API.UI;
 
 import com.example.personalLib.API.Data.BookData;
-import com.example.personalLib.API.Data.UserData;
 import com.example.personalLib.Domain.Services.Reader.ReaderService;
 import com.example.personalLib.Domain.Util.BookConverter;
-import com.example.personalLib.Domain.Util.UserConverter;
-import com.example.personalLib.Security.UserSecurityUtil;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.Text;
+import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Image;
@@ -16,75 +14,35 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.server.VaadinSession;
-import com.vaadin.flow.theme.Theme;
-import com.vaadin.flow.theme.material.Material;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.*;
 
-import static com.example.personalLib.Security.UserSecurityUtil.hasUserRole;
+import static com.example.personalLib.API.PageComponents.getHeader;
 
-@Theme(Material.class)
 @Route("")
+
 public class CatalogView extends VerticalLayout {
 
     @Autowired
     private ReaderService readerService;
 
-    private TextField searchField;
-    private Button searchButton;
-    private Button testRoutingButton;
+    private AppLayout appLayout;
 
-    public CatalogView(ReaderService readerService) {
+    public CatalogView(ReaderService readerService) throws InterruptedException {
 
-        HorizontalLayout links = new HorizontalLayout();
-        testRoutingButton = new Button("test");
-
-       /* testRoutingButton.addClickListener(e-> searchButton.getUI().ifPresent
-                (ui->ui.navigate("test")));*/
-
-        if (hasUserRole())
-        {
-            Button exit = new Button("Выйти", event -> searchButton.getUI().ifPresent(ui -> {
-                    SecurityContextHolder.clearContext();
-                    VaadinSession.getCurrent().close();
-                    ui.getSession().close();
-                    ui.navigate("login/loggedout");
-            }));
-            UserData curUser = UserConverter.convertToUserDTO(readerService.getUserByLogin(UserSecurityUtil.getCurrentUserLogin()));
-            Button link = new Button("Мои книги");
-            link.addClickListener(b ->  link.getUI().ifPresent(ui -> ui.navigate("mybooks/" + curUser.getId())));
-            links.add(exit, link);
-        }
-        else {
-            Button enter = new Button("Войти");
-            enter.addClickListener(b ->  enter.getUI().ifPresent(ui -> ui.navigate("login")));
-            links.add(enter);
-        }
-
-        this.readerService = readerService;
-        searchField = new TextField();
-        searchField.setLabel("Поиск");
-
-        searchButton = new Button();
-        searchButton.setText("Найти");
-
-        searchButton.addClickListener(event -> searchButton.getUI().ifPresent
-                    (ui->ui.navigate(String.format("find/%s", searchField.getValue().trim()))));
-
-        searchField.addKeyPressListener(Key.ENTER, listener -> searchButton.getUI().ifPresent
-                (ui->ui.navigate(String.format("find/%s", searchField.getValue().trim()))));
-
-        add(links, searchField, searchButton, testRoutingButton);
+        appLayout = getHeader(readerService);
+        VerticalLayout mainLayout = new VerticalLayout();
 
         List <BookData> books = BookConverter.convertToBookDTOList(readerService.getAllBooks());
 
         for(BookData book : books)
         {
-            add(setListOfBooks(book));
+            mainLayout.add(setListOfBooks(book));
         }
+
+        appLayout.setContent(mainLayout);
+        add(appLayout);
     }
 
    private String getAuthors(BookData book) {

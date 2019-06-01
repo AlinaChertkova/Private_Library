@@ -1,13 +1,7 @@
 package com.example.personalLib.Domain.Services.Admin;
 
-import com.example.personalLib.DB.Models.AuthorModel;
-import com.example.personalLib.DB.Models.BookModel;
-import com.example.personalLib.DB.Models.GenreModel;
-import com.example.personalLib.DB.Models.ReviewModel;
-import com.example.personalLib.DB.Repository.AuthorRepository;
-import com.example.personalLib.DB.Repository.BookRepository;
-import com.example.personalLib.DB.Repository.GenreRepository;
-import com.example.personalLib.DB.Repository.ReviewRepository;
+import com.example.personalLib.DB.Models.*;
+import com.example.personalLib.DB.Repository.*;
 import com.example.personalLib.Domain.Exceptions.AuthorNotFoundException;
 import com.example.personalLib.Domain.Exceptions.BookNotFoundException;
 import com.example.personalLib.Domain.Exceptions.ReviewNotFoundException;
@@ -21,14 +15,15 @@ import com.example.personalLib.Domain.Util.ReviewConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class AdminServiceImp implements AdminService {
 
     @Autowired
     private AuthorRepository authorRepository;
+    @Autowired
+    private UserRepository userRepository;
     @Autowired
     private BookRepository bookRepository;
     @Autowired
@@ -106,5 +101,20 @@ public class AdminServiceImp implements AdminService {
     public Genre addGenre(String name) {
         return GenreConverter.convertToGenreDomain(
                 genreRepository.save(new GenreModel(name)));
+    }
+
+    @Override
+    public List<Long> getUserStatistics(Integer year) {
+        List<Object[]> list = new ArrayList<>();
+        //list = userRepository.getRegistrationStatistics(year);
+        List<Long> resList = new ArrayList<Long>(Collections.nCopies(12, 0L));
+               // (0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L);
+        for (int i = 0; i < list.size(); i++)
+        {
+            Object[] in = list.get(i);
+            resList.set((Integer) in[1] - 1, (Long)in[0] );
+        }
+
+        return resList;
     }
 }

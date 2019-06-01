@@ -1,6 +1,7 @@
 package com.example.personalLib.DB.Models;
 
 
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -9,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.hibernate.annotations.Cache;
 
 @Entity
 @Table(name = "Books")
@@ -33,7 +35,7 @@ public class BookModel {
     @Column(name = "cover", nullable = false)
     private String coverLink;
 
-    @Column(name = "avgRating")
+    @Column(name = "avgRating", nullable = false)
     private double avgRating;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "book")
