@@ -1,9 +1,12 @@
 package com.example.personalLib.API.UI;
 
 import com.example.personalLib.API.Data.ReadBookData;
+import com.example.personalLib.API.Data.ReviewData;
 import com.example.personalLib.API.Data.UserData;
 import com.example.personalLib.API.PageComponents;
 import com.example.personalLib.Domain.Exceptions.UserNotFoundException;
+import com.example.personalLib.Domain.Model.ReadBook;
+import com.example.personalLib.Domain.Model.Review;
 import com.example.personalLib.Domain.Services.Admin.AdminService;
 import com.example.personalLib.Domain.Services.Reader.ReaderService;
 import com.example.personalLib.Domain.Util.ReadBookConverter;
@@ -15,6 +18,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -64,41 +68,104 @@ public class UserPageView extends VerticalLayout implements HasUrlParameter<Stri
             {
                 throw new Exception ("Доступ невозможен!");
             }
-            HorizontalLayout links = new HorizontalLayout();
-            if (hasUserRole())
-            {
-                if (hasAdminRole())
-                {
-                    Button addAuthorBut = new Button("Добавить автора");
-                    addAuthorBut.addClickListener( e -> addAuthorBut.getUI().ifPresent(ui -> {
-                        Dialog addAuthorDialog = new Dialog();
-                        addAuthorDialog.open();
-                        addAuthorDialog.setCloseOnEsc(true);
-                        addAuthorDialog.setCloseOnOutsideClick(true);
-                        TextField name = new TextField("Имя автора");
-                        TextArea text = new TextArea("Описание автора");
-                        text.setSizeUndefined();
-                        text.setWidth("100%");
-                        text.setHeight("300px");
-                        Button add = new Button("Сохранить");
-                        add.addClickListener(b -> {
-                            adminService.addAuthor(text.getValue(), name.getValue());
-                            addAuthorDialog.close();
-                        });
-                        VerticalLayout vl = new VerticalLayout();
-                        vl.add(name, text, add);
-                        addAuthorDialog.add(name, text, add);
 
-                    }));
-                    links.add(addAuthorBut);
-                }
+            Tab tab1 = new Tab("Мое прочитанное");
+            VerticalLayout myBooksPage = new VerticalLayout();
+            //page1.setText("Page#1");
+
+            Grid <ReadBookData> readBooksGrid = PageComponents.getReadBooksGrid(readerService, userId);
+            Button deleteReadBook = PageComponents.getRemoveFromBooksGridButton(readBooksGrid, readerService, userId);
+            myBooksPage.add(readBooksGrid, deleteReadBook);
+
+            Tab tab2 = new Tab("Мои рецензии");
+            VerticalLayout myReviewsPage = new VerticalLayout();
+
+            Grid <ReviewData> reviewGrid = new Grid<>();
+
+            reviewGrid.addColumn(review -> review.getBook().getTitle()).setHeader("Название книги");
+            reviewGrid.addColumn(ReviewData::getText).setHeader("Отзыв");
+            reviewGrid.addColumn(ReviewData::getMark).setHeader("Оценка").setWidth("12px");
+            reviewGrid.addColumn(r -> PageComponents.dateFormat(r.getPublishingDate())).setHeader("Дата");
+            reviewGrid.addColumn(PageComponents.getEditReviewButton(readerService, userId, null, reviewGrid)).setHeader("Редактировать");
+
+            reviewGrid.setSelectionMode(Grid.SelectionMode.MULTI);
+            PageComponents.setListOfReviews(reviewGrid, readerService, null, userId);
+
+            Button deleteReviewButton = PageComponents.getRemoveFromReviewsGridButton(reviewGrid, readerService, userId);
+
+            myReviewsPage.add(reviewGrid, deleteReviewButton);
+            myReviewsPage.setVisible(false);
+
+            Tab tab3 = new Tab("Личная страница");
+            VerticalLayout myInfoPage = new VerticalLayout();
+
+            HorizontalLayout links = new HorizontalLayout();
+
+            if (hasAdminRole())
+            {
+                Button addAuthorBut = new Button("Добавить автора");
+                addAuthorBut.addClickListener( e -> addAuthorBut.getUI().ifPresent(ui -> {
+                    Dialog addAuthorDialog = new Dialog();
+                    addAuthorDialog.open();
+                    addAuthorDialog.setCloseOnEsc(true);
+                    addAuthorDialog.setCloseOnOutsideClick(true);
+                    TextField name = new TextField("Имя автора");
+                    TextArea text = new TextArea("Описание автора");
+                    text.setSizeUndefined();
+                    text.setWidth("100%");
+                    text.setHeight("300px");
+                    Button add = new Button("Сохранить");
+                    add.addClickListener(b -> {
+                        adminService.addAuthor(text.getValue(), name.getValue());
+                        addAuthorDialog.close();
+                    });
+
+                    Button cancel = new Button("Отмена");
+                    cancel.addClickListener(click -> addAuthorDialog.close());
+
+                    VerticalLayout vl = new VerticalLayout();
+                    HorizontalLayout buttons = new HorizontalLayout(add, cancel);
+                    vl.add(name, text, buttons);
+                    addAuthorDialog.add(name, text, buttons);
+
+                }));
+                links.add(addAuthorBut);
             }
 
-            grid = PageComponents.getReadBooksGrid(readerService, userId);
+            Button editInfo = new Button("Редактировать данные");
+            links.add(editInfo);
 
-            Button deleteButton = PageComponents.getRemoveFromGridButton(grid, readerService, userId);
+            Label login = new Label();
+            login.setText("Логин: " + curUser.getLogin());
 
-            mainLayout.add(links, grid, deleteButton);
+            Label name = new Label();
+            name.setText("Имя: " + curUser.getName());
+
+            Label dateOfReg = new Label();
+            dateOfReg.setText("Дата регистрации: " + PageComponents.dateFormat(curUser.getRegistrationDate()));
+
+            myInfoPage.add(links, login, name, dateOfReg);
+
+            myInfoPage.setVisible(false);
+
+            Map<Tab, Component> tabsToPages = new HashMap<>();
+            tabsToPages.put(tab1, myBooksPage);
+            tabsToPages.put(tab2, myReviewsPage);
+            tabsToPages.put(tab3, myInfoPage);
+            Tabs tabs = new Tabs(tab1, tab2, tab3);
+            VerticalLayout pages = new VerticalLayout (myBooksPage, myReviewsPage, myInfoPage);
+            Set<Component> pagesShown = Stream.of(myBooksPage)
+                    .collect(Collectors.toSet());
+
+            tabs.addSelectedChangeListener(event1 -> {
+                pagesShown.forEach(page -> page.setVisible(false));
+                pagesShown.clear();
+                Component selectedPage = tabsToPages.get(tabs.getSelectedTab());
+                selectedPage.setVisible(true);
+                pagesShown.add(selectedPage);
+            });
+
+            mainLayout.add(tabs, pages);
             appLayout.setContent(mainLayout);
             add(appLayout);
         } catch ( Exception e) {

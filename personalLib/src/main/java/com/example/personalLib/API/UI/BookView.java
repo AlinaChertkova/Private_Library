@@ -1,6 +1,7 @@
 package com.example.personalLib.API.UI;
 
 import com.example.personalLib.API.Data.*;
+import com.example.personalLib.API.PageComponents;
 import com.example.personalLib.Domain.Exceptions.BookNotFoundException;
 import com.example.personalLib.Domain.Exceptions.ReviewNotFoundException;
 import com.example.personalLib.Domain.Exceptions.UserNotFoundException;
@@ -55,6 +56,7 @@ public class BookView extends VerticalLayout implements HasUrlParameter<String> 
     private Dialog addToListDialog;
     private boolean isAuthorised;
     private UserData curUser;
+    private Long userId;
 
     @Override
     public void setParameter(BeforeEvent event, String parameter) {
@@ -64,7 +66,7 @@ public class BookView extends VerticalLayout implements HasUrlParameter<String> 
         VerticalLayout mainLayout = new VerticalLayout();
         bookId = Long.valueOf(parameter);
 
-        HorizontalLayout links = new HorizontalLayout();
+       // HorizontalLayout links = new HorizontalLayout();
         HorizontalLayout coverLayout = new HorizontalLayout();
         VerticalLayout info = new VerticalLayout();
         HorizontalLayout buttons = new HorizontalLayout();
@@ -72,6 +74,12 @@ public class BookView extends VerticalLayout implements HasUrlParameter<String> 
         try {
             currentBook = BookConverter.convertToBookDTO(readerService.getBookById(bookId));
             isAuthorised = UserSecurityUtil.hasUserRole();
+
+            if (isAuthorised)
+            {
+                curUser = UserConverter.convertToUserDTO(readerService.getUserByLogin(UserSecurityUtil.getCurrentUserLogin()));
+                userId = curUser.getId();
+            }
 
             titleLabel = new Label();
             titleLabel.setText(currentBook.getTitle());
@@ -146,9 +154,12 @@ public class BookView extends VerticalLayout implements HasUrlParameter<String> 
                 }
             });
 
-            reviews = new Grid<>();
+            reviews = PageComponents.getReviewsGrid( readerService, userId, currentBook);
 
-            reviews.addColumn(review -> getUserLogin(review)).setHeader("Автор отзыва");
+
+            //reviews = new Grid<>();
+
+           /* reviews.addColumn(review -> getUserLogin(review)).setHeader("Автор отзыва");
             reviews.addColumn(ReviewData::getText).setHeader("Отзыв");
             reviews.addColumn(ReviewData::getMark).setHeader("Оценка").setWidth("12px");
             reviews.addColumn(r -> dateFormat(r.getPublishingDate())).setHeader("Дата");
@@ -245,16 +256,16 @@ public class BookView extends VerticalLayout implements HasUrlParameter<String> 
 
             })).setHeader("Редактировать");
 
-            reviews.setSelectionMode(Grid.SelectionMode.SINGLE);
+            reviews.setSelectionMode(Grid.SelectionMode.SINGLE);*/
 
 
-            reviews.addItemClickListener(e -> {
+            /*reviews.addItemClickListener(e -> {
                 ReviewData selected = e.getItem();
                 reviews.getUI().ifPresent(ui -> ui.navigate(String.format("review/%s", selected.getId().toString())));
-            });
+            });*/
 
             try {
-                setListOfReviews();
+                PageComponents.setListOfReviews( reviews, readerService, currentBook, userId);
             } catch (BookNotFoundException | UserNotFoundException e) {
                 Notification.show(e.getMessage(), 2000, Notification.Position.MIDDLE);
             }
@@ -264,13 +275,15 @@ public class BookView extends VerticalLayout implements HasUrlParameter<String> 
             buttons.add(addToListButton, writeReviewButton);
 
 
-            mainLayout.add(links, coverLayout, buttons, genres, reviews);
+            mainLayout.add(coverLayout, buttons, genres, reviews);
             appLayout.setContent(mainLayout);
             add(appLayout);
 
         }
         catch (BookNotFoundException e) {
             Notification.show(e.getMessage());
+        } catch (UserNotFoundException e) {
+            e.printStackTrace();
         }
     }
 
