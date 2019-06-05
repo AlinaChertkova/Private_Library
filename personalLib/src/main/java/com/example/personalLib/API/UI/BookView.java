@@ -156,124 +156,23 @@ public class BookView extends VerticalLayout implements HasUrlParameter<String> 
 
             reviews = PageComponents.getReviewsGrid( readerService, userId, currentBook);
 
-
-            //reviews = new Grid<>();
-
-           /* reviews.addColumn(review -> getUserLogin(review)).setHeader("Автор отзыва");
-            reviews.addColumn(ReviewData::getText).setHeader("Отзыв");
-            reviews.addColumn(ReviewData::getMark).setHeader("Оценка").setWidth("12px");
-            reviews.addColumn(r -> dateFormat(r.getPublishingDate())).setHeader("Дата");
-            reviews.addColumn(new NativeButtonRenderer<>("Изменить", clickedItem -> {
-                try {
-                    if (!isAuthorised) {
-                        throw new Exception("Войдите, чтобы продолжить!");
-                    } else {
-                        curUser = UserConverter.convertToUserDTO(readerService.getUserByLogin(UserSecurityUtil.getCurrentUserLogin()));
-                    }
-                    if (clickedItem.getUser().getId().equals(curUser.getId())) {
-                        Dialog updateDialog = new Dialog();
-                        updateDialog.open();
-                        updateDialog.setCloseOnEsc(true);
-                        updateDialog.setCloseOnOutsideClick(true);
-                        Button saveButton = new Button();
-                        saveButton.setText("Сохранить");
-
-                        Button cancelButton = new Button();
-                        cancelButton.setText("Отмена");
-                        cancelButton.addClickListener(e -> updateDialog.close());
-
-                        Button deleteButton = new Button();
-                        deleteButton.setText("Удалить рецензию");
-                        deleteButton.addClickListener(deleteButtonEvent -> {
-                            Dialog deleteDialog = new Dialog();
-                            deleteDialog.open();
-                            deleteDialog.setCloseOnEsc(true);
-                            deleteDialog.setCloseOnOutsideClick(true);
-
-                            Button continueButton = new Button();
-                            continueButton.setText("Удалить");
-                            continueButton.addClickListener(continueButtonEvent -> {
-                                try {
-                                    readerService.deleteReview(clickedItem.getId());
-                                    Notification.show("Рецензия удалена", 2000, Notification.Position.MIDDLE);
-                                    deleteDialog.close();
-                                    updateDialog.close();
-                                    setListOfReviews();
-                                } catch (ReviewNotFoundException | UserNotFoundException | BookNotFoundException e) {
-                                    Notification.show(e.getMessage(), 2000, Notification.Position.MIDDLE);
-                                }
-                            });
-
-                            Button cancelDeleteButton = new Button();
-                            cancelDeleteButton.setText("Отмена");
-                            cancelDeleteButton.addClickListener(ev -> deleteDialog.close());
-
-                            deleteDialog.add(new Label("Удалить рецензию?"));
-                            HorizontalLayout deleteDialogButtons = new HorizontalLayout();
-                            deleteDialogButtons.add(continueButton, cancelDeleteButton);
-                            deleteDialog.add(deleteDialogButtons);
-                        });
-
-                        TextArea text = new TextArea("Текст рецензии");
-                        text.setValue(clickedItem.getText());
-                        text.setSizeUndefined();
-                        text.setWidth("100%");
-                        text.setHeight("300px");
-
-                        RadioButtonGroup<Double> mark = new RadioButtonGroup<>();
-                        mark.setItems(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0);
-                        mark.setLabel("Новая оценка");
-
-                        saveButton.addClickListener(ev -> {
-                            try {
-                                Double newMark;
-                                if (mark.isEmpty()) {
-                                    newMark = clickedItem.getMark();
-                                } else {
-                                    newMark = mark.getValue();
-                                }
-                                if (readerService.updateReview(clickedItem.getId(), text.getValue(), newMark) != null) {
-                                    Notification.show("Сохранено", 2000, Notification.Position.MIDDLE);
-                                    updateDialog.close();
-                                    setListOfReviews();
-                                }
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-
-                            updateDialog.close();
-                        });
-
-                        HorizontalLayout updateDialogButtons = new HorizontalLayout();
-                        updateDialogButtons.add(saveButton, cancelButton, deleteButton);
-                        updateDialog.add(mark, text, updateDialogButtons);
-                    } else {
-                        Notification.show("Невозможно изменить", 2000, Notification.Position.MIDDLE);
-                    }
-                } catch (Exception e) {
-                    Notification.show(e.getMessage(), 2000, Notification.Position.MIDDLE);
-                }
-
-            })).setHeader("Редактировать");
-
-            reviews.setSelectionMode(Grid.SelectionMode.SINGLE);*/
-
-
-            /*reviews.addItemClickListener(e -> {
-                ReviewData selected = e.getItem();
-                reviews.getUI().ifPresent(ui -> ui.navigate(String.format("review/%s", selected.getId().toString())));
-            });*/
-
             try {
                 PageComponents.setListOfReviews( reviews, readerService, currentBook, userId);
             } catch (BookNotFoundException | UserNotFoundException e) {
                 Notification.show(e.getMessage(), 2000, Notification.Position.MIDDLE);
             }
 
+            Button editBookButton = new Button("Редактировать книгу");
+            editBookButton.addClickListener(editEv -> {});
+
             info.add(isbnLabel, titleLabel, authorLabel, description);
             coverLayout.add(cover, info);
             buttons.add(addToListButton, writeReviewButton);
 
+            if (curUser != null && UserSecurityUtil.hasAdminRole())
+            {
+                buttons.add(editBookButton);
+            }
 
             mainLayout.add(coverLayout, buttons, genres, reviews);
             appLayout.setContent(mainLayout);

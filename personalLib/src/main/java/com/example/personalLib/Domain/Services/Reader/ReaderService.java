@@ -164,4 +164,6 @@ public interface ReaderService {
      * @throws UserNotFoundException
      */
     void deleteUser(Long id) throws UserNotFoundException;
+
+    User getUserById(Long id) throws UserNotFoundException;
 }

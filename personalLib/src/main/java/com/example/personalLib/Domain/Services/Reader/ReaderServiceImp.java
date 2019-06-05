@@ -189,4 +189,11 @@ public class ReaderServiceImp implements ReaderService{
 
         userRepository.deleteById(id);
     }
+
+    @Override
+    public User getUserById(Long id) throws UserNotFoundException {
+
+        final UserModel user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
+        return UserConverter.convertToUserDomain(user);
+    }
 }

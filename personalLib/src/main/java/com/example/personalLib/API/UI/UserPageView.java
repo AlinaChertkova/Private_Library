@@ -4,9 +4,11 @@ import com.example.personalLib.API.Data.ReadBookData;
 import com.example.personalLib.API.Data.ReviewData;
 import com.example.personalLib.API.Data.UserData;
 import com.example.personalLib.API.PageComponents;
+import com.example.personalLib.DB.Models.UserModel;
 import com.example.personalLib.Domain.Exceptions.UserNotFoundException;
 import com.example.personalLib.Domain.Model.ReadBook;
 import com.example.personalLib.Domain.Model.Review;
+import com.example.personalLib.Domain.Model.User;
 import com.example.personalLib.Domain.Services.Admin.AdminService;
 import com.example.personalLib.Domain.Services.Reader.ReaderService;
 import com.example.personalLib.Domain.Util.ReadBookConverter;
@@ -25,6 +27,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
+import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.renderer.NativeButtonRenderer;
@@ -33,6 +36,10 @@ import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.*;
@@ -40,8 +47,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.example.personalLib.API.PageComponents.getHeader;
-import static com.example.personalLib.Security.UserSecurityUtil.hasAdminRole;
-import static com.example.personalLib.Security.UserSecurityUtil.hasUserRole;
+import static com.example.personalLib.Security.UserSecurityUtil.*;
 
 @Route("mybooks")
 public class UserPageView extends VerticalLayout implements HasUrlParameter<String> {
@@ -50,19 +56,22 @@ public class UserPageView extends VerticalLayout implements HasUrlParameter<Stri
     private ReaderService readerService;
     @Autowired
     private AdminService adminService;
+    @Autowired
+    private AuthenticationManager authManager;
 
     private Long userId;
     private Grid<ReadBookData> grid;
+    private UserData curUser;
 
     @Override
     public void setParameter(BeforeEvent event, String parameter) {
         try {
-            AppLayout appLayout = new AppLayout();
+            AppLayout appLayout;
             appLayout = getHeader(readerService);
             VerticalLayout mainLayout = new VerticalLayout();
 
             userId = Long.valueOf(parameter);
-            UserData curUser = UserConverter.convertToUserDTO(readerService.getUserByLogin(UserSecurityUtil.getCurrentUserLogin()));
+            curUser = UserConverter.convertToUserDTO(readerService.getUserByLogin(UserSecurityUtil.getCurrentUserLogin()));
 
             if (userId != curUser.getId())
             {
@@ -88,6 +97,10 @@ public class UserPageView extends VerticalLayout implements HasUrlParameter<Stri
             reviewGrid.addColumn(r -> PageComponents.dateFormat(r.getPublishingDate())).setHeader("Дата");
             reviewGrid.addColumn(PageComponents.getEditReviewButton(readerService, userId, null, reviewGrid)).setHeader("Редактировать");
 
+            reviewGrid.addItemClickListener(e -> {
+                ReviewData selected = e.getItem();
+                reviewGrid.getUI().ifPresent(ui -> ui.navigate(String.format("review/%s", selected.getId().toString())));
+            });
             reviewGrid.setSelectionMode(Grid.SelectionMode.MULTI);
             PageComponents.setListOfReviews(reviewGrid, readerService, null, userId);
 
@@ -132,8 +145,105 @@ public class UserPageView extends VerticalLayout implements HasUrlParameter<Stri
                 links.add(addAuthorBut);
             }
 
-            Button editInfo = new Button("Редактировать данные");
-            links.add(editInfo);
+            Button editInfoButton = new Button("Редактировать данные");
+            editInfoButton.addClickListener(editInfoEv -> editInfoButton.getUI().ifPresent(ui -> {
+                Dialog editInfoDialog = new Dialog();
+                editInfoDialog.open();
+                editInfoDialog.setCloseOnEsc(true);
+                editInfoDialog.setCloseOnOutsideClick(true);
+
+                String password = curUser.getPassword();
+                TextField login = new TextField("Логин");
+                login.setValue(curUser.getLogin());
+                TextField name = new TextField(" Имя");
+                name.setValue(curUser.getName());
+
+                Button cancel = new Button("Отмена");
+                cancel.addClickListener(cancelEv -> editInfoDialog.close());
+
+                Button saveEdit = new Button("Сохранить");
+                saveEdit.addClickListener(saveEv -> {
+                    try {
+                        if (login.isEmpty() || name.isEmpty()) {
+                            throw new Exception("Заполнены не все обязательные поля!");
+                        }
+                        User user1 = readerService.getUserByLogin(login.getValue());
+                        if (!(login.getValue()).equals(curUser.getLogin()) && user1 != null)
+                        {
+                            login.setValue("");
+                            throw new Exception("Пользователь в таким логином уже существует!");
+                        }
+                        readerService.updateUser(curUser.getId(), login.getValue(), name.getValue(), password);
+                        if (!(curUser.getLogin()).equals(login.getValue()))
+                        {
+                            SecurityContextHolder.clearContext();
+                            UsernamePasswordAuthenticationToken authReq = new UsernamePasswordAuthenticationToken(login.getValue(), password);
+
+                            Authentication auth = authManager.authenticate(authReq);
+                            SecurityContext sc = SecurityContextHolder.getContext();
+                            sc.setAuthentication(auth);
+                        }
+
+                        curUser = UserConverter.convertToUserDTO(readerService.getUserByLogin(UserSecurityUtil.getCurrentUserLogin()));
+                        Notification.show("Сохранено", 2000, Notification.Position.MIDDLE);
+                        editInfoDialog.close();
+                    }catch (Exception e)
+                    {
+                        Notification.show(e.getMessage(), 2000, Notification.Position.MIDDLE);
+                    }
+                });
+
+                Button editPassword = new Button("Изменить пароль");
+                editPassword.addClickListener(editPassEv -> {
+                    Dialog editPasswordDialog = new Dialog();
+                    editPasswordDialog.open();
+                    editPasswordDialog.setCloseOnEsc(true);
+                    editPasswordDialog.setCloseOnOutsideClick(true);
+
+                    PasswordField oldPassword = new PasswordField("Пароль");
+                    PasswordField newPassword = new PasswordField("Новый пароль");
+                    PasswordField newPasswordRep = new PasswordField("Повторите новый пароль");
+
+                    Button savePassword = new Button("Сохранить");
+                    savePassword.addClickListener(savePasswordEv -> {
+                        try {
+                            if (!oldPassword.getValue().equals(curUser.getPassword())) {
+                                oldPassword.clear();
+                                throw new Exception("Неверный пероль!");
+                            }
+                            else if (!(newPassword.getValue()).equals(newPasswordRep.getValue()))
+                            {
+                                newPasswordRep.clear();
+                                throw new Exception("Пароль не совпал!");
+                            }
+                            else {
+                                readerService.updateUser(curUser.getId(), curUser.getLogin(), curUser.getName(), newPassword.getValue());
+                                curUser = UserConverter.convertToUserDTO(readerService.getUserByLogin(UserSecurityUtil.getCurrentUserLogin()));
+                                Notification.show("Сохранено", 2000, Notification.Position.MIDDLE);
+                                editPasswordDialog.close();
+                            }
+                        }catch (Exception e) {
+                            Notification.show(e.getMessage(), 2000, Notification.Position.MIDDLE);
+                        }
+                    });
+
+                    Button exitButton = new Button("Отмена");
+                    exitButton.addClickListener(e -> editPasswordDialog.close());
+                    VerticalLayout passwordFields = new VerticalLayout();
+                    passwordFields.add(oldPassword, newPassword, newPasswordRep);
+                    editPasswordDialog.add(passwordFields, savePassword, exitButton);
+                });
+                VerticalLayout fields = new VerticalLayout();
+                fields.add(login, name);
+
+                HorizontalLayout buttons = new HorizontalLayout();
+                buttons.add(saveEdit, cancel);
+
+                editInfoDialog.add(fields, editPassword, buttons);
+
+            }));
+
+            links.add(editInfoButton);
 
             Label login = new Label();
             login.setText("Логин: " + curUser.getLogin());
