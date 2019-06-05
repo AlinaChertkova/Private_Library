@@ -78,6 +78,7 @@ public class FindView extends VerticalLayout implements HasUrlParameter<String> 
 
             bookList.add(searchField, searchButton);
 
+            searchField.setValue(searchParam);
             searchButton.addClickListener(e -> searchButton.getUI().ifPresent
                     (ui->ui.navigate(String.format("find/%s", searchField.getValue().trim()))));
 
@@ -87,6 +88,13 @@ public class FindView extends VerticalLayout implements HasUrlParameter<String> 
             List<BookData> books = BookConverter.convertToBookDTOList(readerService.getBooksByTitle(searchParam));
             books.addAll(BookConverter.convertToBookDTOList(readerService.getBooksByAuthorName(searchParam)));
             books.addAll(BookConverter.convertToBookDTOList(readerService.getBookByISBN(searchParam)));
+
+            if (books.isEmpty())
+            {
+                Image image = new Image("frontend/404.png", "Image");
+                image.setWidth("100%");
+                bookList.add(image);
+            }
 
             for(BookData book : books)
             {

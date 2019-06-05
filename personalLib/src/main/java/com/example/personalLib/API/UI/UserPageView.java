@@ -4,14 +4,9 @@ import com.example.personalLib.API.Data.ReadBookData;
 import com.example.personalLib.API.Data.ReviewData;
 import com.example.personalLib.API.Data.UserData;
 import com.example.personalLib.API.PageComponents;
-import com.example.personalLib.DB.Models.UserModel;
-import com.example.personalLib.Domain.Exceptions.UserNotFoundException;
-import com.example.personalLib.Domain.Model.ReadBook;
-import com.example.personalLib.Domain.Model.Review;
 import com.example.personalLib.Domain.Model.User;
 import com.example.personalLib.Domain.Services.Admin.AdminService;
 import com.example.personalLib.Domain.Services.Reader.ReaderService;
-import com.example.personalLib.Domain.Util.ReadBookConverter;
 import com.example.personalLib.Domain.Util.UserConverter;
 import com.example.personalLib.Security.UserSecurityUtil;
 import com.vaadin.flow.component.Component;
@@ -19,22 +14,18 @@ import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.data.renderer.NativeButtonRenderer;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.server.VaadinSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -71,7 +62,7 @@ public class UserPageView extends VerticalLayout implements HasUrlParameter<Stri
             VerticalLayout mainLayout = new VerticalLayout();
 
             userId = Long.valueOf(parameter);
-            curUser = UserConverter.convertToUserDTO(readerService.getUserByLogin(UserSecurityUtil.getCurrentUserLogin()));
+            curUser = UserConverter.convertToUserDTO(readerService.findUserByLogin(UserSecurityUtil.getCurrentUserLogin()));
 
             if (userId != curUser.getId())
             {
@@ -129,8 +120,17 @@ public class UserPageView extends VerticalLayout implements HasUrlParameter<Stri
                     text.setHeight("300px");
                     Button add = new Button("Сохранить");
                     add.addClickListener(b -> {
-                        adminService.addAuthor(text.getValue(), name.getValue());
-                        addAuthorDialog.close();
+                        try {
+
+                            if (name.isEmpty())
+                            {
+                                throw new Exception("Заполнены не все обязательные поля!");
+                            }
+                            adminService.addAuthor(text.getValue(), name.getValue());
+                            addAuthorDialog.close();
+                        } catch (Exception e2){
+                            Notification.show(e2.getMessage(), 2000, Notification.Position.MIDDLE);
+                        }
                     });
 
                     Button cancel = new Button("Отмена");
@@ -152,7 +152,6 @@ public class UserPageView extends VerticalLayout implements HasUrlParameter<Stri
                 editInfoDialog.setCloseOnEsc(true);
                 editInfoDialog.setCloseOnOutsideClick(true);
 
-                String password = curUser.getPassword();
                 TextField login = new TextField("Логин");
                 login.setValue(curUser.getLogin());
                 TextField name = new TextField(" Имя");
@@ -164,27 +163,23 @@ public class UserPageView extends VerticalLayout implements HasUrlParameter<Stri
                 Button saveEdit = new Button("Сохранить");
                 saveEdit.addClickListener(saveEv -> {
                     try {
-                        if (login.isEmpty() || name.isEmpty()) {
+                         if (login.isEmpty() || name.isEmpty()) {
                             throw new Exception("Заполнены не все обязательные поля!");
                         }
-                        User user1 = readerService.getUserByLogin(login.getValue());
-                        if (!(login.getValue()).equals(curUser.getLogin()) && user1 != null)
+                        if (!(login.getValue()).equals(curUser.getLogin()) && readerService.existUserByLogin(login.getValue()))
                         {
                             login.setValue("");
                             throw new Exception("Пользователь в таким логином уже существует!");
                         }
-                        readerService.updateUser(curUser.getId(), login.getValue(), name.getValue(), password);
-                        if (!(curUser.getLogin()).equals(login.getValue()))
-                        {
-                            SecurityContextHolder.clearContext();
-                            UsernamePasswordAuthenticationToken authReq = new UsernamePasswordAuthenticationToken(login.getValue(), password);
+                        readerService.updateUser(curUser.getId(), login.getValue(), name.getValue(), curUser.getPassword());
+                        SecurityContextHolder.clearContext();
+                        UsernamePasswordAuthenticationToken authReq = new UsernamePasswordAuthenticationToken(login.getValue(), curUser.getPassword());
 
-                            Authentication auth = authManager.authenticate(authReq);
-                            SecurityContext sc = SecurityContextHolder.getContext();
-                            sc.setAuthentication(auth);
-                        }
+                        Authentication auth = authManager.authenticate(authReq);
+                        SecurityContext sc = SecurityContextHolder.getContext();
+                        sc.setAuthentication(auth);
 
-                        curUser = UserConverter.convertToUserDTO(readerService.getUserByLogin(UserSecurityUtil.getCurrentUserLogin()));
+                        curUser = UserConverter.convertToUserDTO(readerService.findUserByLogin(UserSecurityUtil.getCurrentUserLogin()));
                         Notification.show("Сохранено", 2000, Notification.Position.MIDDLE);
                         editInfoDialog.close();
                     }catch (Exception e)
@@ -218,7 +213,7 @@ public class UserPageView extends VerticalLayout implements HasUrlParameter<Stri
                             }
                             else {
                                 readerService.updateUser(curUser.getId(), curUser.getLogin(), curUser.getName(), newPassword.getValue());
-                                curUser = UserConverter.convertToUserDTO(readerService.getUserByLogin(UserSecurityUtil.getCurrentUserLogin()));
+                                curUser = UserConverter.convertToUserDTO(readerService.findUserByLogin(UserSecurityUtil.getCurrentUserLogin()));
                                 Notification.show("Сохранено", 2000, Notification.Position.MIDDLE);
                                 editPasswordDialog.close();
                             }

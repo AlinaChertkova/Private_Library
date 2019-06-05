@@ -11,5 +11,7 @@ import java.util.List;
 
 public interface UserRepository extends JpaRepository<UserModel, Long> {
 
+    boolean existsByLogin(String login);
+
     UserModel findByLogin(String login);
 }

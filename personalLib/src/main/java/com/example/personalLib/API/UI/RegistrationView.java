@@ -76,6 +76,10 @@ public class RegistrationView extends VerticalLayout {
                 repeatPasswordField.setValue("");
                 throw new Exception("Пароли на совпадают!");
             }
+            if (password.isEmpty() || loginField.isEmpty() || usernameField.isEmpty())
+            {
+                throw new Exception("Заполнены не все поля!");
+            }
             UserModel user = new UserModel();
             user.setActive(true);
             user.setPassword(password);

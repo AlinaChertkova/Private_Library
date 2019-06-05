@@ -100,7 +100,9 @@ public interface ReaderService {
      * @param login логин полозователя
      * @return пользователь
      */
-    User getUserByLogin(String login);
+    boolean existUserByLogin(String login);
+
+     User findUserByLogin(String login);
 
     /**
      * Получить список жанров

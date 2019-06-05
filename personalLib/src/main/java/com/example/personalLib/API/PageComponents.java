@@ -12,31 +12,24 @@ import com.example.personalLib.Domain.Util.ReadBookConverter;
 import com.example.personalLib.Domain.Util.ReviewConverter;
 import com.example.personalLib.Domain.Util.UserConverter;
 import com.example.personalLib.Security.UserSecurityUtil;
-import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.AppLayoutMenu;
 import com.vaadin.flow.component.applayout.AppLayoutMenuItem;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.textfield.TextArea;
-import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.renderer.NativeButtonRenderer;
-import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinSession;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import javax.annotation.Nullable;
-import javax.validation.constraints.Null;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -64,7 +57,7 @@ public class PageComponents extends VerticalLayout {
         if (hasUserRole())
         {
 
-            UserData curUser = UserConverter.convertToUserDTO(readerService.getUserByLogin(UserSecurityUtil.getCurrentUserLogin()));
+            UserData curUser = UserConverter.convertToUserDTO(readerService.findUserByLogin(UserSecurityUtil.getCurrentUserLogin()));
 
             AppLayoutMenuItem myPageItem = new AppLayoutMenuItem("Моя страница");
             myPageItem.addMenuItemClickListener(
@@ -106,7 +99,7 @@ public class PageComponents extends VerticalLayout {
         Button saveButton = new Button();
         saveButton.setText("Сохранить");
 
-        UserData curUser = UserConverter.convertToUserDTO(readerService.getUserByLogin(UserSecurityUtil.getCurrentUserLogin()));
+        UserData curUser = UserConverter.convertToUserDTO(readerService.findUserByLogin(UserSecurityUtil.getCurrentUserLogin()));
 
 
         RadioButtonGroup<Double> mark = new RadioButtonGroup<>();

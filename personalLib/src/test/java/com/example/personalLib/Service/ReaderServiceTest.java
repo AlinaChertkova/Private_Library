@@ -240,7 +240,7 @@ public class ReaderServiceTest {
     @Test
     public void getUserByLoginTest()  {
 
-        final User user = readerService.getUserByLogin("Alina");
+        final User user = readerService.existUserByLogin("Alina");
 
         Assert.assertNotNull(user);
         Assert.assertEquals(user.getId(), Long.valueOf(1L));

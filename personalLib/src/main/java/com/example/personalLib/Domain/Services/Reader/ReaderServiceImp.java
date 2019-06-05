@@ -113,8 +113,13 @@ public class ReaderServiceImp implements ReaderService{
     }
 
     @Override
-    public User getUserByLogin(String login) {
+    public User findUserByLogin(String login) {
         return UserConverter.convertToUserDomain(userRepository.findByLogin(login));
+    }
+
+    @Override
+    public boolean existUserByLogin(String login) {
+        return userRepository.existsByLogin(login);
     }
 
     @Override

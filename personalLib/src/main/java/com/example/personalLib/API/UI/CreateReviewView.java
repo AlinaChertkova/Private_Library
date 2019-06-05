@@ -1,15 +1,12 @@
 package com.example.personalLib.API.UI;
 
 import com.example.personalLib.API.Data.UserData;
-import com.example.personalLib.Domain.Exceptions.BookNotFoundException;
-import com.example.personalLib.Domain.Exceptions.UserNotFoundException;
 import com.example.personalLib.Domain.Model.Review;
+import com.example.personalLib.Domain.Model.User;
 import com.example.personalLib.Domain.Services.Reader.ReaderService;
 import com.example.personalLib.Domain.Util.UserConverter;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.checkbox.Checkbox;
-import com.vaadin.flow.component.checkbox.CheckboxGroup;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -19,7 +16,6 @@ import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -49,7 +45,7 @@ public class CreateReviewView extends VerticalLayout implements HasUrlParameter<
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (!(authentication instanceof AnonymousAuthenticationToken)) {
             String currentUserName = authentication.getName();
-            user = UserConverter.convertToUserDTO(readerService.getUserByLogin(currentUserName));
+            user = UserConverter.convertToUserDTO(readerService.findUserByLogin(currentUserName));
         }
 
         Button back = new Button("Назад");
@@ -72,16 +68,19 @@ public class CreateReviewView extends VerticalLayout implements HasUrlParameter<
         saveButton.addClickListener(e ->
         {
             try {
-                Double m = mark.getValue();
-                Review saved = readerService.createReview(user.getId(), bookId, text.getValue(), LocalDateTime.now(), m);
-
-            if (saved!= null)
-            {
-                Notification.show("Сохранено", 2000, Notification.Position.MIDDLE);
-                saveButton.getUI().ifPresent(ui -> ui.navigate(String.format("book/%s", bookId.toString())));
-            }
-            } catch (UserNotFoundException | BookNotFoundException e1) {
-                Notification.show("Не удалось сохранить", 2000, Notification.Position.MIDDLE);
+                if (!text.getValue().isEmpty()) {
+                    Double m = mark.getValue();
+                    Review saved = readerService.createReview(user.getId(), bookId, text.getValue(), LocalDateTime.now(), m);
+                    if (saved != null) {
+                        Notification.show("Сохранено", 2000, Notification.Position.MIDDLE);
+                        saveButton.getUI().ifPresent(ui -> ui.navigate(String.format("book/%s", bookId.toString())));
+                    }
+                }
+                else {
+                    throw new Exception("Напишите тескт рецензии!");
+                }
+            } catch (Exception e1) {
+                Notification.show(e1.getMessage(), 2000, Notification.Position.MIDDLE);
             }
         });
 

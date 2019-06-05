@@ -3,7 +3,6 @@ package com.example.personalLib.API.UI;
 import com.example.personalLib.API.Data.*;
 import com.example.personalLib.API.PageComponents;
 import com.example.personalLib.Domain.Exceptions.BookNotFoundException;
-import com.example.personalLib.Domain.Exceptions.ReviewNotFoundException;
 import com.example.personalLib.Domain.Exceptions.UserNotFoundException;
 import com.example.personalLib.Domain.Services.Reader.ReaderService;
 import com.example.personalLib.Domain.Util.BookConverter;
@@ -23,7 +22,6 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
 import com.vaadin.flow.component.textfield.TextArea;
-import com.vaadin.flow.data.renderer.NativeButtonRenderer;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.Route;
@@ -77,7 +75,7 @@ public class BookView extends VerticalLayout implements HasUrlParameter<String> 
 
             if (isAuthorised)
             {
-                curUser = UserConverter.convertToUserDTO(readerService.getUserByLogin(UserSecurityUtil.getCurrentUserLogin()));
+                curUser = UserConverter.convertToUserDTO(readerService.findUserByLogin(UserSecurityUtil.getCurrentUserLogin()));
                 userId = curUser.getId();
             }
 
@@ -105,7 +103,7 @@ public class BookView extends VerticalLayout implements HasUrlParameter<String> 
 
             addToListButton.addClickListener(e -> {
                 if (isAuthorised) {
-                    curUser = UserConverter.convertToUserDTO(readerService.getUserByLogin(UserSecurityUtil.getCurrentUserLogin()));
+                    curUser = UserConverter.convertToUserDTO(readerService.findUserByLogin(UserSecurityUtil.getCurrentUserLogin()));
                     addToListDialog = new Dialog();
                     addToListDialog.open();
                     addToListDialog.setCloseOnEsc(true);
@@ -124,18 +122,16 @@ public class BookView extends VerticalLayout implements HasUrlParameter<String> 
                             {
                                 if (readerService.addToList(curUser.getId(), bookId, mark.getValue()) != null) {
                                     Notification.show("Сохранено");
+                                    addToListDialog.close();
                                 }
                             }
                             else {
                                 Notification.show("Оценка не выбрана");
-                                addToListDialog.close();
                             }
 
                         } catch (UserNotFoundException | BookNotFoundException e1) {
                             Notification.show(e1.getMessage(), 2000, Notification.Position.MIDDLE);
                         }
-
-                        addToListDialog.close();
                     });
                     addToListDialog.add(mark, saveButton);
                 } else {
