@@ -33,6 +33,11 @@ dependencies {
 	implementation 'com.vaadin:vaadin-charts-flow'
 	compile 'org.springframework.boot:spring-boot-starter-cache'
 	implementation 'com.vaadin:vaadin-app-layout-flow'
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	implementation 'org.springframework.boot:spring-boot-starter-mustache'
+	testImplementation('org.springframework.boot:spring-boot-starter-test') {
+		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+	}
 }
 
 dependencyManagement {

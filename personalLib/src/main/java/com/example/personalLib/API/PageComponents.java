@@ -343,7 +343,7 @@ public class PageComponents extends VerticalLayout {
                     try {
                         List<Long> list = new ArrayList();
                         reviews.getSelectedItems().forEach(review -> list.add(review.getId()));
-                        readerService.deleteReadBooks(list);
+                        readerService.deleteReviews(list);
                         setListOfReviews(reviews, readerService, null, userId);
                         deleteDialog.close();
                     }

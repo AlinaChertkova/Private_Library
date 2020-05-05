@@ -24,19 +24,20 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable() // CSRF handled by Vaadin
-                .exceptionHandling()
-                .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login"))
+                    .exceptionHandling()
+                    .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login"))
                 .and()
-                .logout().logoutSuccessUrl("/login/loggedout")
+                    .logout()
+                    .logoutSuccessUrl("/login/loggedout")
                 .and()
-                .authorizeRequests()
-                .antMatchers("/", "/registration", "/VAADIN/**"
-                        , "/login", "/login**", "/login/**", "/book/**", "/frontend/**", "/find/**", "/review/**"
-                        , "/header", "/tab",
-                        "/frontend/**").permitAll()
-                //.requestMatchers(SecurityUtils::isFrameworkInternalRequest).permitAll()
-                // deny other URLs until authenticated
-                .anyRequest().fullyAuthenticated();
+                    .authorizeRequests()
+                    .antMatchers("/", "/registration", "/VAADIN/**"
+                            , "/login", "/login**", "/login/**", "/book/**", "/frontend/**", "/find/**", "/review/**"
+                            , "/header", "/tab",
+                            "/frontend/**", "/greeting").permitAll()
+                    //.requestMatchers(SecurityUtils::isFrameworkInternalRequest).permitAll()
+                    // deny other URLs until authenticated
+                    .anyRequest().fullyAuthenticated();
         http.headers().frameOptions().sameOrigin();
     }
 

@@ -237,14 +237,14 @@ public class ReaderServiceTest {
         Assert.assertEquals(readBooks.size(), 2);
     }
 
-    @Test
-    public void getUserByLoginTest()  {
-
-        final User user = readerService.existUserByLogin("Alina");
-
-        Assert.assertNotNull(user);
-        Assert.assertEquals(user.getId(), Long.valueOf(1L));
-    }
+//    @Test
+//    public void getUserByLoginTest()  {
+//
+//        final User user = readerService.existUserByLogin("Alina");
+//
+//        Assert.assertNotNull(user);
+//        Assert.assertEquals(user.getId(), Long.valueOf(1L));
+//    }
 
     @Test
     public void getAllGenresByBookIdTest() {

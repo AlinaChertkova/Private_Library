@@ -64,7 +64,8 @@ public class UserPageView extends VerticalLayout implements HasUrlParameter<Stri
             userId = Long.valueOf(parameter);
             curUser = UserConverter.convertToUserDTO(readerService.findUserByLogin(UserSecurityUtil.getCurrentUserLogin()));
 
-            if (userId != curUser.getId())
+            Long cur = curUser.getId();
+            if (!userId.equals(cur))
             {
                 throw new Exception ("Доступ невозможен!");
             }
@@ -202,6 +203,9 @@ public class UserPageView extends VerticalLayout implements HasUrlParameter<Stri
                     Button savePassword = new Button("Сохранить");
                     savePassword.addClickListener(savePasswordEv -> {
                         try {
+                            if (newPassword.isEmpty() || newPasswordRep.isEmpty()) {
+                                throw new Exception("Заполнены не все обязательные поля!");
+                            }
                             if (!oldPassword.getValue().equals(curUser.getPassword())) {
                                 oldPassword.clear();
                                 throw new Exception("Неверный пероль!");

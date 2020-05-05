@@ -117,6 +117,8 @@ public interface ReaderService {
      */
     void deleteReadBooks (List<Long> ids) throws Exception;
 
+    void deleteReviews (List<Long> ids) throws Exception;
+
     /**
      * Обновить оценку книги
      * @param mark новая оценка

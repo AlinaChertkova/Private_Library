@@ -140,6 +140,18 @@ public class ReaderServiceImp implements ReaderService{
     }
 
     @Override
+    public void deleteReviews(List<Long> ids) throws Exception {
+        for (Long id : ids)
+        {
+            if (!reviewRepository.existsById(id))
+            {
+                throw new ReviewNotFoundException(id);
+            }
+            reviewRepository.deleteById(id);
+        }
+    }
+
+    @Override
     public ReadBook updateMark(Long id, Double mark) throws ReadBookNotFoundException {
 
         final ReadBookModel readBookModel = readBookRepository.findById(id)
