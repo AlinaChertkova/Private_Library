@@ -1,0 +1,28 @@
+.container {
+	max-width: 1140px;
+}
+
+.cover-im {
+	width : 150px;
+}
+
+.card {
+	width : 150px;
+}
+
+.book-btn {
+    color: black;
+    background-color: #a599bf;
+    width : 100%;
+    font-size: 0.85rem;
+}
+
+.author {
+    font-size: 0.85rem;
+}
+
+.book-cart-cont {
+	float: left;
+	width: 20%;
+	height: 400px;
+}

@@ -17,11 +17,11 @@
 </head>
 <body>
 <div class="container">
-    {{#message}}
+    <#if message??>
         <div class="d-flex justify-content-center">
-            {{> notification}}
+            <#include "notification.ftl">
         </div>
-    {{/message}}
+    </#if>
 	<div class="d-flex justify-content-center h-100">
 		<div class="card">
 			<div class="card-header">

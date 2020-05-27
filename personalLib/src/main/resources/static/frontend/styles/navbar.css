@@ -1,0 +1,55 @@
+@import url('https://fonts.googleapis.com/css?family=Numans');
+
+.navbar {
+	background-color: #a599bf;
+	height: 60px;
+	font-family: 'Numans', sans-serif;
+}
+
+.nav-link {
+	color: black;
+}
+
+.nav-link:hover {
+	color: #66035e;
+}
+
+.btn-search {
+	border-top-right-radius: 50px;
+	border-bottom-right-radius: 50px;
+	background-color: white;
+	border-color: #ced4da #ced4da #ced4da transparent;
+	width: 50px;
+}
+
+.form-control {	
+	border-top-left-radius: 50px;
+	border-bottom-left-radius: 50px;
+	padding-left: 1rem;
+	/*border-color: #ced4da transparent #ced4da #ced4da;*/
+}
+
+.fa-search {
+	color: #78b97f;
+}
+
+.input-group>.form-control {
+	/*margin-left: 50px !important;*/
+	/*padding-left: 1rem;*/
+	padding-left: 2.375rem;
+	font-size: 1rem;
+
+}
+
+.search-form {
+	width: 50% !important;
+	/*margin-left: 50px;*/
+}
+
+.navbar-collapse {
+	display: flex !important;
+}
+
+.contaner {
+	max-width: 1140px;
+}
