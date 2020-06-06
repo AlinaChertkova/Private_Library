@@ -46,10 +46,11 @@ public class LoginController {
         }
     }
 
-    @GetMapping("/login/loggedout")
-    public String logout(Map<String, Object> model) {
-        model.put("message", "Вы успешно вышли");
-
-        return "login";
-    }
+//    @GetMapping("/login/loggedout")
+//    public String logout(Map<String, Object> model) {
+//        model.put("message", "Вы успешно вышли");
+//
+////        return "redirect:/login";
+//        return "login";
+//    }
 }

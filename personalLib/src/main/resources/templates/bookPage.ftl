@@ -15,6 +15,7 @@
 	<link rel="stylesheet" type="text/css" href="/frontend/styles/navbar.css">
 	<link rel="stylesheet" type="text/css" href="/frontend/styles/notification.css">
 	<link rel="stylesheet" type="text/css" href="/frontend/styles/bookPage.css">
+	<link rel="stylesheet" type="text/css" href="/frontend/styles/reviewModal.css">
 </head>
 <body style="background-color: #f7f7f7;">
   <#include "navbar.ftl">
@@ -48,8 +49,8 @@
           </div>
         </div>
         <div class="genres-block">
-            <#if book.bookGenres??>
-                <#list book.bookGenres as genre>
+            <#if genres??>
+                <#list genres as genre>
                     <h6>${genre.name}</h6>
                 </#list>
             </#if>
@@ -67,17 +68,13 @@
             </div>
         </div>
     </div>
-
-  <!--<div class="container">
-      <#list books as book>
-           <div class="book-cart-cont">
-                <#include "bookCard.ftl">
-           </div>
-      </#list>
-  </div>-->
+    <div class="modal fade float-center" id="reviewModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div id="reviewModalContent"></div>
+    </div>
 </body>
-<script src="frontend/js/jquery/jquery.min.js"></script>
-<script src="frontend/bootstrap-4.3.1-dist/js/popper.min.js"></script>
-<script src="frontend/bootstrap-4.3.1-dist/js/bootstrap.min.js"></script>
-<script src="frontend/js/notification.js"></script>
+<script src="/frontend/js/jquery/jquery.min.js"></script>
+<script src="/frontend/bootstrap-4.3.1-dist/js/popper.min.js"></script>
+<script src="/frontend/bootstrap-4.3.1-dist/js/bootstrap.min.js"></script>
+<script src="/frontend/js/notification.js"></script>
+<script src="/frontend/js/review.js"></script>
 </html>

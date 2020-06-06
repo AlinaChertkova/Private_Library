@@ -8,7 +8,6 @@
 .cover-block {
 	float: left;
 	width: 20%;
-	/*background-color: red;*/
 }
 
 .cover-book-page {
@@ -18,16 +17,14 @@
 
 .discription-block {
 	float: left;
-	width: 70%;
+	width: 60%;
 	padding: 10px;
 	border-radius: 5px;
-	/*background-color: #fff;*/
 }
 
 .genres-block {
 	padding: 10px;
 	border-radius: 5px;
-	/*background-color: #fff;*/
 	margin-left: 10px;
 }
 
@@ -49,14 +46,9 @@
 }
 .review-btn .add-btn {
 	color: black;
-	/*background-color: #78b97f;*/
-
 	width: 180px;
 	position: relative;
-
 	margin-right: 10px;
-	/*margin: auto;*/
-	/*display: block;*/
 }
 
 .btn:hover{
@@ -82,20 +74,19 @@
 }
 
 .card-text {
-	white-space: nowrap;      /*keep text on one line */
-overflow: hidden;         /*prevent text from being shown outside the border */
-text-overflow: ellipsis;
+	white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .card {
 	padding: 30px;
-border-radius: 15px;
-border: 0;
+    border-radius: 15px;
+    border: 0;
 }
 
 .review-block {
 	width: 100%;
-
 }
 
 .time {

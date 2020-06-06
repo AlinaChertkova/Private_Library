@@ -28,7 +28,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login"))
                 .and()
                     .logout()
-                    .logoutSuccessUrl("/login/loggedout")
+//                    .logoutSuccessUrl("/login/loggedout")
                 .and()
                     .authorizeRequests()
                     .antMatchers("/", "/registration", "/VAADIN/**"

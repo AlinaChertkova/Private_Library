@@ -10,6 +10,6 @@
         ${review.getText()}
     </p>
     <div>
-      <a href="#" class="more-link float-right">Читать далее...</a>
+      <a class="more-link float-right js-review-read-more" data-id="${review.getId()}">Читать далее...</a>
     </div>
 </div>

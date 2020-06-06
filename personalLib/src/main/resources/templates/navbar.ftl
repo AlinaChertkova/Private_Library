@@ -28,7 +28,7 @@
               <a class="nav-link" href="/mybooks/userId">Моя страница</a>
             </li>
             <li class="nav-item ml-4">
-              <a class="nav-link" href="/login/loggedout">Выход</a>
+              <a class="nav-link" href="/logout">Выход</a>
             </li>
           </ul>
         </div>
