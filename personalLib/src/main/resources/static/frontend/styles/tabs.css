@@ -1,0 +1,82 @@
+.container {
+	max-width: 1140px;
+}
+
+#layer1 {
+    width: 100%; /* Ширина первого слоя */
+    padding: 10px; /* Поля вокруг текста */
+    /*background: #78b97f66; *//* Цвет фона */
+   }
+
+nav {
+	width: 100%;
+}
+
+ .nav-tabs .nav-link.active {
+    color: #78b97f;
+    background-color:#78b97f;
+    border-color: #78b97f #78b97f #78b97f;
+    color: #000;
+}
+
+.nav-tabs .nav-link.active:hover {
+	color: #000;
+}
+
+.nav-tabs {
+    border-bottom: 1px solid #78b97f;
+}
+
+.nav-tabs .nav-link {
+    border: 1px solid transparent;
+    border-top-left-radius: .25rem;
+    border-top-right-radius: .25rem;
+}
+
+.nav-tabs .nav-link:hover {
+    border-color: #78b97f #78b97f #78b97f;
+    color: #78b97f;
+}
+
+.nav-link {
+	color: #000;
+}
+
+
+/*.nav-tabs > a {
+    float:none;
+    display:inline-block;
+    zoom:1;
+}
+
+.nav-tabs {
+    text-align:center;
+}*/
+
+.my-mark {
+    color: yellow;
+}
+
+.cover-im {
+    width : 150px;
+}
+
+.card {
+    float: left;
+    min-height: 250px;
+}
+
+.card-book-authors {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.marks-block {
+    display: block;
+}
+
+.card-title {
+    font-size: 1.25rem;
+    colot: black;
+}

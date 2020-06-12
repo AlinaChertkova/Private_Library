@@ -98,3 +98,10 @@
 	color: #78b97f;
 	font-size: 1rem;
 }
+
+.alert {
+    position:fixed !important;
+    top: 0px;
+    z-index:9999;
+}
+

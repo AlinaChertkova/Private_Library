@@ -29,6 +29,10 @@ padding: 15px;
 	color: #78b97f;
 }
 
-.form-control:focus {
+.review-text-area:focus {
     border-color: #78b97f;
+}
+
+.delete-btn {
+    color: red;
 }

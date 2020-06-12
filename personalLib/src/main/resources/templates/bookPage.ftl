@@ -18,10 +18,11 @@
 	<link rel="stylesheet" type="text/css" href="/frontend/styles/reviewModal.css">
 </head>
 <body style="background-color: #f7f7f7;">
-  <#include "navbar.ftl">
-
+    <div id="alerts">
+    </dev>
+    <#include "navbar.ftl">
     <div class="container mt-5">
-        <div class="row">
+        <div class="row" data-bookId="${book.getId()}">
             <div class="cover-block">
               <div class="cover-info">
                 <img src="/frontend/images/${book.coverLink}" class="cover-book-page" alt="Cover">
@@ -40,8 +41,8 @@
             ${book.description}
           </div>
           <div class="mt-4">
-            <input type="button" value="Добавить" class="btn add-btn">
-            <input type="button" value="Написать рецензию" class="btn review-btn">
+            <input type="button" value="Добавить" data-type="mark" class="btn add-btn">
+            <input type="button" value="Написать рецензию" data-type="add" class="btn review-btn">
 
           </div>
           <div class="input-div">
@@ -60,11 +61,7 @@
         <div class="row">
             <h4 class="review-title my-4">Рецензии пользователей</h4>
             <div class="review-block">
-                <#if reviews??>
-                    <#list reviews as review>
-                        <#include "reviewCard.ftl">
-                    </#list>
-                </#if>
+                <#include "reviewBlock.ftl">
             </div>
         </div>
     </div>

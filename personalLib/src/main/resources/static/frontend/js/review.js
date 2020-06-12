@@ -1,65 +1,24 @@
-//$(document).on('click', '.js-review-read-more', function (event){
-//    var $this = $j(this);
-//
-//
-//
-//});
-//
-//
-//$(document).ready(function() {
-//    // GET REQUEST
-//    $("#getALlBooks").click(function(event) {
-//        event.preventDefault();
-//        ajaxGet(event);
-//    });
-//
-//    // DO GET
-//    function ajaxGet() {
-//
-//
-//        $.ajax({
-//            type : "GET",
-//            url : "/review/",
-//            success : function(result) {
-//                if (result.status == "success") {
-//                    $('#getResultDiv ul').empty();
-//                    var custList = "";
-//                    $.each(result.data,
-//                            function(i, book) {
-//                                var user = "Book Name  "
-//                                        + book.bookName
-//                                        + ", Author  = " + book.author
-//                                        + "<br>";
-//                                $('#getResultDiv .list-group').append(
-//                                        user)
-//                            });
-//                    console.log("Success: ", result);
-//                } else {
-//                    $("#getResultDiv").html("<strong>Error</strong>");
-//                    console.log("Fail: ", result);
-//                }
-//            },
-//            error : function(e) {
-//                $("#getResultDiv").html("<strong>Error</strong>");
-//                console.log("ERROR: ", e);
-//            }
-//        });
-//    }
-//})
-$(document).on('click', '.js-review-read-more', function (event){
+$(document).on('click', '.js-review-read-more, .fa-edit', function (event){
     var el = $(this);
     var id = el.data('id');
+    var card = el.closest('.card');
 	$.ajax({
             method : "POST",
             url : "/review/getReview",
             data: {
-                id: el.data('id')
+                id: el.data('id'),
+                type: el.data('type'),
+                bookId: card.data('book')
             },
 
             success : function(result) {
-                var modal = document.getElementById("reviewModalContent");
-                modal.innerHTML = result;
-                $("#reviewModal").modal('show');
+                if (result.status == 'success') {
+                    var modal = document.getElementById("reviewModalContent");
+                    modal.innerHTML = result.data;
+                    $("#reviewModal").modal('show');
+                } else {
+                    setAlert(result.data, "danger");
+                }
             },
 
             error : function(e) {
@@ -67,3 +26,79 @@ $(document).on('click', '.js-review-read-more', function (event){
             }
         });
 });
+
+$(document).on('click', '.review-btn', function (event){
+    var el = $(this);
+    var row = el.closest('.row');
+	$.ajax({
+            method : "POST",
+            url : "/review/getReview",
+            data: {
+                bookId: row.data('bookid'),
+                id: null,
+                type: el.data('type')
+            },
+
+            success : function(result) {
+                if (result.status == 'success') {
+                    var modal = document.getElementById("reviewModalContent");
+                    modal.innerHTML = result.data;
+                    $("#reviewModal").modal('show');
+                } else {
+                    setAlert(result.message, result.status);
+                }
+            },
+
+            error : function(e) {
+                console.log("ERROR: ", e);
+            }
+        });
+});
+
+$(document).on('click', '.add-btn', function (event){
+    var el = $(this);
+    var row = el.closest('.row');
+	$.ajax({
+            method : "POST",
+            url : "/review/getReview",
+            data: {
+                bookId: row.data('bookid'),
+                id: null,
+                type: el.data('type')
+            },
+
+            success : function(result) {
+                if (result.status == 'success') {
+                    var modal = document.getElementById("reviewModalContent");
+                    modal.innerHTML = result.data;
+                    $("#reviewModal").modal('show');
+
+                    setAlert(result.message, result.status);
+                } else {
+                    setAlert(result.message, result.status);
+                }
+            },
+
+            error : function(e) {
+                console.log("ERROR: ", e);
+            }
+        });
+});
+
+function setAlert(message, type) {
+$("#alerts").append(
+    '<div class="alert alert-' + type + ' alert-dismissible" data-delay="800" id="notification" role="alert">' +
+      '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+          '<span aria-hidden="true">&times;</span></button>' +
+          '<div class="notification-message">' +
+              message +
+          '</div>' +
+    '</div>'
+    );
+    var notification = $('.alert');
+    notification.show();
+
+    $(".alert").delay(1500).slideUp(200, function() {
+        $(this).alert('close');
+    });
+}

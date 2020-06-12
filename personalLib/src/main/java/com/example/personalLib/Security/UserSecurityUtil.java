@@ -31,5 +31,4 @@ public class UserSecurityUtil {
         Authentication authentication = sc.getAuthentication();
         return authentication.getName();
     }
-
 }

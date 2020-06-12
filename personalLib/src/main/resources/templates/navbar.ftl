@@ -1,3 +1,6 @@
+<#assign
+    known = Session.SPRING_SECURITY_CONTEXT??
+>
 <nav class="navbar navbar-expand">
     <div class="container">
           <a class="navbar-brand" href="/">
@@ -10,7 +13,7 @@
 
         <form class="search-form ml-2" action="/search" method="post">
             <div class="input-group">
-                <input type="text" name="searchParam" class="form-control" placeholder="Поиск">
+                <input type="text" name="searchParam" class="form-control form-control-search" placeholder="Поиск">
                 <div class="input-group-append">
                   <button class="btn btn-search" type="submit">
                     <i class="fa fa-search"></i>
@@ -24,12 +27,20 @@
             <li class="nav-item">
               <a class="nav-link" href="/">Каталог</a>
             </li>
-            <li class="nav-item ml-4">
-              <a class="nav-link" href="/mybooks/userId">Моя страница</a>
-            </li>
-            <li class="nav-item ml-4">
-              <a class="nav-link" href="/logout">Выход</a>
-            </li>
+            <#if known>
+                <li class="nav-item ml-4">
+                  <a class="nav-link" href="/mypage">Моя страница</a>
+                </li>
+            </#if>
+            <#if known>
+                 <li class="nav-item ml-4">
+                  <a class="nav-link" href="/logout">Выход</a>
+                </li>
+             <#else>
+                <li class="nav-item ml-4">
+                  <a class="nav-link" href="/login">Вход</a>
+                </li>
+            </#if>
           </ul>
         </div>
     </div>

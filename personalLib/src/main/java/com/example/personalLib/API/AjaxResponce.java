@@ -12,6 +12,7 @@ import lombok.ToString;
 public class AjaxResponce<T> {
 
     private String status;
+    private String message;
     private T data;
 
 }

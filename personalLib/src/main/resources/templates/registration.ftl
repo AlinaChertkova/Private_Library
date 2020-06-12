@@ -17,9 +17,11 @@
 	<div class="limiter">
 		<div class="container-login100">
 			<div class="wrap-login100">
-			    {{#message}}
-                    {{> notification}}
-                {{/message}}
+			    <#if message??>
+                    <div class="d-flex justify-content-center">
+                        <#include "notification.ftl">
+                    </div>
+                </#if>
 				<form action="/registration" method="post" class="login100-form">
 					<h3>Регистрация</h3>
 
