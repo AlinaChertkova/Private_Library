@@ -14,6 +14,7 @@
 	<!--Custom styles-->
 	<link rel="stylesheet" type="text/css" href="/frontend/styles/navbar.css">
 	<link rel="stylesheet" type="text/css" href="/frontend/styles/notification.css">
+	<link rel="stylesheet" type="text/css" href="/frontend/styles/registration.css">
 
 	<link rel="stylesheet" type="text/css" href="/frontend/styles/tabs.css">
 	<link rel="stylesheet" type="text/css" href="/frontend/styles/reviewModal.css">
@@ -39,12 +40,18 @@
         </nav>
         <div class="tab-content" id="nav-tabContent">
           <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
-            <div class="review-block">
+            <div class="books-block">
                 <#include "readBooks.ftl">
             </div>
           </div>
-          <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">bnbn</div>
-          <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">qwqw</div>
+          <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+              <div class="books-block">
+                  <#include "userReviews.ftl">
+              </div>
+          </div>
+          <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
+            <#include "userInfo.ftl">
+          </div>
         </div>
     </div>
 </div>
@@ -52,5 +59,5 @@
   <script src="/frontend/bootstrap-4.3.1-dist/js/popper.min.js"></script>
   <script src="/frontend/bootstrap-4.3.1-dist/js/bootstrap.min.js"></script>
   <script src="js/registration.js"></script>
-  <script src="js/tab.js"></script>
+  <script src="/frontend/js/userPage.js"></script>
 </body>

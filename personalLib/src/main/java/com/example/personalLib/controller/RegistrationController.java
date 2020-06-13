@@ -27,7 +27,7 @@ public class RegistrationController {
     private UserRepository userRepositiry;
 
     @GetMapping("/registration")
-    public String indexAction(Map<String, Object> model) {
+    public String index(Map<String, Object> model) {
         return "registration";
     }
 

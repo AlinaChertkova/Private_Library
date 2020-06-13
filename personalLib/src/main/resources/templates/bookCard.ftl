@@ -1,4 +1,4 @@
-<div class="card mt-5">
+<div class="card book-card mt-5">
     <img src="frontend/images/${book.coverLink}" class="card-img-top cover-im" alt="Cover">
     <div class="card-body">
       <h5 class="card-title">${book.title}</h5>

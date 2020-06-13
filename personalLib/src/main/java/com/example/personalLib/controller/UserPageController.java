@@ -35,12 +35,14 @@ public class UserPageController {
         try {
             String currentUserName = authentication.getName();
             UserData user = UserConverter.convertToUserDTO(readerService.findUserByLogin(currentUserName));
-
-//            List<ReviewData> reviews = ReviewConverter.convertToReviewDTOList(readerService.getAllReviewsByUserId(user.getId()));
             List<ReadBookData> books = ReadBookConverter.convertToReadBookDTOList(readerService.getAllReadBooksByUserId(user.getId()));
             model.put("books", books);
             model.put("user", user);
+            model.put("bookCount", books.size());
 
+            List<ReviewData> reviews = ReviewConverter.convertToReviewDTOList(readerService.getAllReviewsByUserId(user.getId()));
+            model.put("reviews", reviews);
+            model.put("reviewCount", reviews.size());
 
         } catch (UserNotFoundException e) {
 

@@ -10,6 +10,10 @@
 	width : 150px;
 }
 
+.book-card {
+    height: 425px;
+}
+
 .book-btn {
     color: black;
     background-color: #a599bf;

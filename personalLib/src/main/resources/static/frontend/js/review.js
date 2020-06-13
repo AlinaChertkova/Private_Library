@@ -17,7 +17,7 @@ $(document).on('click', '.js-review-read-more, .fa-edit', function (event){
                     modal.innerHTML = result.data;
                     $("#reviewModal").modal('show');
                 } else {
-                    setAlert(result.data, "danger");
+                    setAlert(result.message, result.status);
                 }
             },
 
@@ -85,20 +85,3 @@ $(document).on('click', '.add-btn', function (event){
         });
 });
 
-function setAlert(message, type) {
-$("#alerts").append(
-    '<div class="alert alert-' + type + ' alert-dismissible" data-delay="800" id="notification" role="alert">' +
-      '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
-          '<span aria-hidden="true">&times;</span></button>' +
-          '<div class="notification-message">' +
-              message +
-          '</div>' +
-    '</div>'
-    );
-    var notification = $('.alert');
-    notification.show();
-
-    $(".alert").delay(1500).slideUp(200, function() {
-        $(this).alert('close');
-    });
-}

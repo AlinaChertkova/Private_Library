@@ -18,13 +18,17 @@
 </head>
 <body style="background-color: #f7f7f7;">
   <#include "navbar.ftl">
-
     <div class="container">
-        <#list books as book>
-             <div class="book-cart-cont">
-                  <#include "bookCard.ftl">
-             </div>
-        </#list>
+        <#if books??>
+            <#list books as book>
+                 <div class="book-cart-cont">
+                      <#include "bookCard.ftl">
+                 </div>
+            </#list>
+
+        <#else>
+            <img src="/frontend/noresults.png" class="no-results-im" alt="NoRes">
+        </#if>
     </div>
 </body>
 <script src="frontend/js/jquery/jquery.min.js"></script>

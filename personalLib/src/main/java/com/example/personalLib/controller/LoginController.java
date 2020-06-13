@@ -21,7 +21,7 @@ public class LoginController {
     private AuthenticationManager authManager;
 
     @GetMapping("/login")
-    public String greeting(Map<String, Object> model) {
+    public String index(Map<String, Object> model) {
         return "login";
     }
 

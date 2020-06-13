@@ -1,6 +1,6 @@
 <#if books??>
     <#list books as book>
-        <div class="card mt-3 ml-4" style="width: 46%;">
+        <div class="card mt-3 ml-4" style=" width: 45%;">
             <div class="row no-gutters">
               <div  style="width: 33%;">
                 <img src="/frontend/images/${book.getBook().getCoverLink()}" class="cover-im" alt="image">
@@ -18,12 +18,12 @@
                         </small>
                     </p>
                     <dev class="marks-block">
-                        <span>Моя оценка: ${book.getMark()} <i class="fa fa-star my-mark" aria-hidden="true"></i></span>
+                        <span>Моя оценка: ${book.getMark()} <i class="fa fa-star my-mark" aria-hidden="true"></i></span><br/>
                         <span>Средняя оценка: ${book.getBook().getAvgRating()} <i class="fa fa-star" aria-hidden="true"></i></span>
                     </dev>
                     <div class="mt-4">
-                        <input type="button" value="Изменить" data-type="delete-book" class="btn add-btn">
-                        <input type="button" value="Удалить" data-type="add" class="btn review-btn">
+                        <input type="button" value="Изменить" data-type="change-book" class="btn change-btn">
+                        <input type="button" value="Удалить" data-type="delete-book" class="btn delete-btn">
                     </div>
                   </div>
                 </div>

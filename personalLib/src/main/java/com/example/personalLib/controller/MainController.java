@@ -31,7 +31,7 @@ public class MainController {
         return "main";
     }
 
-    @PostMapping("/search")
+    @GetMapping("/search")
     public String login(String searchParam, Map<String, Object> model) {
         List<BookData> books = BookConverter.convertToBookDTOList(readerService.getAllBooks());
         if (searchParam != null && !searchParam.isEmpty()) {

@@ -11,7 +11,7 @@
             <span class="navbar-toggler-icon"></span>
           </button>
 
-        <form class="search-form ml-2" action="/search" method="post">
+        <form class="search-form ml-2" action="/search" method="get">
             <div class="input-group">
                 <input type="text" name="searchParam" class="form-control form-control-search" placeholder="Поиск">
                 <div class="input-group-append">

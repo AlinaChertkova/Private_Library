@@ -23,20 +23,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable() // CSRF handled by Vaadin
+        http.csrf().disable()
                     .exceptionHandling()
                     .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login"))
                 .and()
                     .logout()
-//                    .logoutSuccessUrl("/login/loggedout")
                 .and()
                     .authorizeRequests()
                     .antMatchers("/", "/registration", "/VAADIN/**"
                             , "/login", "/login**", "/login/**", "/book/**", "/frontend/**", "/find/**", "/review/**"
                             , "/header", "/tab",
                             "/frontend/**", "/main", "/search", "/greeting").permitAll()
-                    //.requestMatchers(SecurityUtils::isFrameworkInternalRequest).permitAll()
-                    // deny other URLs until authenticated
                     .anyRequest().fullyAuthenticated();
         http.headers().frameOptions().sameOrigin();
     }
@@ -49,11 +46,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .usersByUsernameQuery("select username, password, active from Users where username=?")
                 .authoritiesByUsernameQuery("select u.username, ur.role from Users u inner join user_role ur on u.user_id = ur.user_id where u.username=?");
     }
-
-    /*@Bean
-    public PasswordEncoder encoder() {
-        return new BCryptPasswordEncoder();
-    }*/
 
     @Bean
     public AuthenticationManager customAuthenticationManager() throws Exception {

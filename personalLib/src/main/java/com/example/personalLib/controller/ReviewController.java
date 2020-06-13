@@ -35,6 +35,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 import java.util.*;
 
+import static com.example.personalLib.Security.UserSecurityUtil.hasAdminRole;
+
 @Controller
 public class ReviewController {
     @Autowired
@@ -48,10 +50,11 @@ public class ReviewController {
     public AjaxResponce<String> getModalContent(HttpServletRequest request, HttpServletResponse response, String id, String type, String bookId, Map<String, Object> model) {
         Long reviewId;
         AjaxResponce<String> responce;
+        ReviewData currentReview = null;
         try {
             if (!id.isEmpty()) {
                 reviewId = Long.valueOf(id);
-                ReviewData currentReview = ReviewConverter.convertToReviewDTO(readerService.getReviewById(reviewId));
+                currentReview = ReviewConverter.convertToReviewDTO(readerService.getReviewById(reviewId));
                 model.put("review", currentReview);
             }
             View view = this.viewResolver.resolveViewName("reviewModalContent", Locale.ENGLISH);
@@ -74,8 +77,14 @@ public class ReviewController {
             }
 
             if (type.equals("edit")) {
-                if (!UserSecurityUtil.hasUserRole()) {
-                    view = this.viewResolver.resolveViewName("notification", Locale.ENGLISH);
+                if (UserSecurityUtil.hasUserRole()) {
+                    UserData curUser = UserConverter.convertToUserDTO(readerService.findUserByLogin(UserSecurityUtil.getCurrentUserLogin()));
+                    Long userId = curUser.getId();
+
+                    if (!currentReview.getUser().getId().equals(userId) && !UserSecurityUtil.hasAdminRole()) {
+                        throw new Exception("Невозможно изменить");
+                    }
+                } else {
                     throw new Exception("Войдите, чтобы продолжить");
                 }
                 title = "Редактировать рецензию пользователя";

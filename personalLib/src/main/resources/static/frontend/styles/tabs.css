@@ -80,3 +80,30 @@ nav {
     font-size: 1.25rem;
     colot: black;
 }
+
+.tab-content {
+    width: 100%;
+}
+
+.delete-btn {
+    color: red;
+}
+
+.change-btn {
+	background-color: #c9c9c9;
+	border-color: #c9c9c9;
+}
+
+.btn:hover{
+	color: black;
+	background-color: white;
+}
+
+.save-btn {
+    background-color: #78b97f;
+	border-color: #78b97f;
+}
+
+/*.review-cover-im {
+    margin-top: 50px;
+}*/
