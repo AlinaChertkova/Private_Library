@@ -33,3 +33,15 @@ public class UserSecurityUtil {
         return authentication.getName();
     }
 }
+
+/*@startuml
+ class UserSecurityUtil {
+
+    public static boolean hasUserRole()
+
+    public static boolean hasAdminRole()
+
+    public static String getCurrentUserLogin()
+
+}
+@enduml*/

@@ -10,9 +10,9 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 public class AjaxResponce<T> {
-
     private String status;
     private String message;
     private T data;
 
 }
+
