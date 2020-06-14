@@ -2,20 +2,14 @@ package com.example.personalLib.DB;
 
 import com.example.personalLib.DB.Models.*;
 import com.example.personalLib.DB.Repository.*;
-import com.example.personalLib.Domain.Model.Genre;
-import com.example.personalLib.Domain.Services.Reader.ReaderService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cache.CacheManager;
-import org.springframework.cache.ehcache.EhCacheCache;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace.NONE;
@@ -48,7 +42,7 @@ public class BookRepTest {
         final String coverLink = "link";
         final double avgRating = 4.1;
 
-        final BookModel bookModel = new BookModel(ISBN, title, description, coverLink, avgRating);
+        final BookModel bookModel = new BookModel(ISBN, title, description, coverLink, avgRating, 4);
 
         final BookModel saved = bookRepository.save(bookModel);
 
@@ -82,7 +76,7 @@ public class BookRepTest {
         final String coverLink = "link";
         final double avgRating = 4.1;
 
-        final BookModel bookModel = new BookModel(ISBN, title, description, coverLink, avgRating);
+        final BookModel bookModel = new BookModel(ISBN, title, description, coverLink, avgRating, 4);
 
         final BookModel saved = bookRepository.save(bookModel);
 
@@ -118,7 +112,7 @@ public class BookRepTest {
         final String coverLink = "link";
         final double avgRating = 4.1;
 
-        final BookModel bookModel = new BookModel(ISBN, title, description, coverLink, avgRating);
+        final BookModel bookModel = new BookModel(ISBN, title, description, coverLink, avgRating, 4);
 
 
         //Save publishing
@@ -177,7 +171,7 @@ public class BookRepTest {
         final String coverLink = "link";
         final double avgRating = 4.1;
 
-        final BookModel bookModel = new BookModel(ISBN, title, description, coverLink, avgRating);
+        final BookModel bookModel = new BookModel(ISBN, title, description, coverLink, avgRating, 4);
 
         final BookModel saved = bookRepository.save(bookModel);
 
@@ -203,7 +197,7 @@ public class BookRepTest {
         final String coverLink = "link";
         final double avgRating = 4.1;
 
-        final BookModel bookModel = new BookModel(ISBN, title, description, coverLink, avgRating);
+        final BookModel bookModel = new BookModel(ISBN, title, description, coverLink, avgRating, 4);
 
         final BookModel saved = bookRepository.save(bookModel);
 
@@ -231,13 +225,13 @@ public class BookRepTest {
     @Test
     public void testBookReviewRelations() {
 
-        BookModel book = bookRepository.save(new BookModel("122222", "Rrrrrrr", "fdffdfdf", "link", 1234));
+        BookModel book = bookRepository.save(new BookModel("122222", "Rrrrrrr", "fdffdfdf", "link", 1234, 4));
        // UserModel user = userRepository.save(new UserModel("Alina", "User", "Al", "111111", LocalDateTime.now()));
         //Long userId, Long bookId, String text, LocalDateTime date, double mark
         //createReview(user.getId(), book.getId(), "Aaaaaaaa", LocalDateTime.now(), 122 );
         //createReview(user.getId(), book.getId(), "Bbbbbbbbb", LocalDateTime.now(), 122 );
         //(String isbn, String title, String description, String coverLink, double avgRating)
-        bookRepository.save(new BookModel("122222", "Rrrrrrr", "fdffdfdf", "link", 1234));
+        bookRepository.save(new BookModel("122222", "Rrrrrrr", "fdffdfdf", "link", 1234, 4));
 
     }
 
@@ -250,11 +244,11 @@ public class BookRepTest {
         final String coverLink = "link";
         final double avgRating = 4.1;
 
-        final BookModel bookModel = new BookModel(ISBN, title, description, coverLink, avgRating);
+        final BookModel bookModel = new BookModel(ISBN, title, description, coverLink, avgRating, 4);
 
         bookRepository.save(bookModel);
 
-        final BookModel bookModel2 = new BookModel("test", "June june July", "test", "test", 12.52);
+        final BookModel bookModel2 = new BookModel("test", "June june July", "test", "test", 12.52, 2);
 
         bookRepository.save(bookModel2);
 
@@ -272,11 +266,11 @@ public class BookRepTest {
         final String coverLink = "link";
         final double avgRating = 4.1;
 
-        final BookModel bookModel = new BookModel(ISBN, title, description, coverLink, avgRating);
+        final BookModel bookModel = new BookModel(ISBN, title, description, coverLink, avgRating, 4);
 
         bookRepository.save(bookModel);
 
-        final BookModel bookModel2 = new BookModel("test", "June", "test", "test", 12.52);
+        final BookModel bookModel2 = new BookModel("test", "June", "test", "test", 12.52, 4);
 
         bookRepository.save(bookModel2);
 
@@ -294,8 +288,8 @@ public class BookRepTest {
         final String coverLink = "link";
         final double avgRating = 4.1;
 
-        final BookModel bookModel = new BookModel(ISBN, title, description, coverLink, avgRating);
-        final BookModel bookModel2 = new BookModel("test", "test", "test", "test", 12.3);
+        final BookModel bookModel = new BookModel(ISBN, title, description, coverLink, avgRating, 2);
+        final BookModel bookModel2 = new BookModel("test", "test", "test", "test", 12.3, 2);
 
         final GenreModel genre1 = new GenreModel( "Humor");
         GenreModel savedGenre1 = genreRepository.save(genre1);
@@ -322,8 +316,8 @@ public class BookRepTest {
         final String coverLink = "link";
         final double avgRating = 4.1;
 
-        final BookModel bookModel = new BookModel(ISBN, title, description, coverLink, avgRating);
-        final BookModel bookModel2 = new BookModel("test", "test", "test", "test", 12.3);
+        final BookModel bookModel = new BookModel(ISBN, title, description, coverLink, avgRating, 2);
+        final BookModel bookModel2 = new BookModel("test", "test", "test", "test", 12.3, 2);
 
         final AuthorModel author1 = new AuthorModel( "test", "Alina Chertkova");
         AuthorModel savedA = authorRepository.save(author1);

@@ -1,34 +1,36 @@
 package com.example.personalLib.controller;
 
-import com.example.personalLib.API.Data.BookData;
-import com.example.personalLib.API.Data.GenreData;
-import com.example.personalLib.API.Data.ReviewData;
-import com.example.personalLib.API.Data.UserData;
+import com.example.personalLib.API.AjaxResponce;
+import com.example.personalLib.API.Data.*;
 import com.example.personalLib.Domain.Exceptions.BookNotFoundException;
 import com.example.personalLib.Domain.Exceptions.ReviewNotFoundException;
 import com.example.personalLib.Domain.Exceptions.UserNotFoundException;
 import com.example.personalLib.Domain.Model.ReadBook;
 import com.example.personalLib.Domain.Services.Reader.ReaderService;
-import com.example.personalLib.Domain.Util.BookConverter;
-import com.example.personalLib.Domain.Util.GenreConverter;
-import com.example.personalLib.Domain.Util.ReviewConverter;
-import com.example.personalLib.Domain.Util.UserConverter;
+import com.example.personalLib.Domain.Util.*;
+import com.vaadin.flow.component.notification.Notification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.View;
+import org.springframework.web.servlet.ViewResolver;
+import org.springframework.web.util.ContentCachingResponseWrapper;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 @Controller
 public class BookController {
     @Autowired
     private ReaderService readerService;
+    @Autowired
+    private ViewResolver viewResolver;
 
     @GetMapping("/book/{id}")
     public String getBook(@PathVariable String id, Map<String, Object> model) {
@@ -55,7 +57,9 @@ public class BookController {
     }
 
     @PostMapping("/book/mark")
-    public String addToList(Double mark, String bookId, Map<String, Object> model) {
+    @ResponseBody
+    public AjaxResponce<String> addToList(Double mark, String bookId, Map<String, Object> model) {
+        AjaxResponce<String> responce;
         try {
             UserData user = null;
             Long book = Long.valueOf(bookId);
@@ -69,11 +73,112 @@ public class BookController {
             if (saved == null) {
                 throw new Exception("Невозможно сохранить");
             }
+            responce = new AjaxResponce<>("success", "Добавлено в прочитанное", null);
         } catch (Exception e) {
-            String message = e.getMessage();
-            model.put("message", message);
-            return "registration";
+            responce = new AjaxResponce<>("danger", e.getMessage(), null);
         }
-        return "redirect:/book/" + bookId;
+        return responce;
+    }
+
+    @PostMapping("/book/getModal")
+    @ResponseBody
+    public AjaxResponce<String> getModal(HttpServletRequest request, HttpServletResponse response, String id, Double mark, String type,  String bookId, Map<String, Object> model) {
+        AjaxResponce<String> responce;
+        try {
+//            UserData user = null;
+//            Long book = Long.valueOf(bookId);
+            Long readBookId = Long.valueOf(id);
+//            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//            if (!(authentication instanceof AnonymousAuthenticationToken)) {
+//                String currentUserName = authentication.getName();
+//                user = UserConverter.convertToUserDTO(readerService.findUserByLogin(currentUserName));
+//            }
+
+            ReadBookData book = ReadBookConverter.convertToReadBookDTO(readerService.getReadBookById(readBookId));
+
+//            if (readerService.updateMark(readBookId, mark) == null) {
+//                throw new Exception("Невозможно сохранить");
+//            }
+
+//            List<ReadBookData> books = ReadBookConverter.convertToReadBookDTOList(readerService.getAllReadBooksByUserId(user.getId()));
+//            ReadBook saved = readerService.addToList(user.getId(), book, mark);
+
+            View view = this.viewResolver.resolveViewName("editMark", Locale.ENGLISH);
+            model.put("book", book);
+            model.put("title", "Редакторовать оценку");
+            ContentCachingResponseWrapper mockResponse = new ContentCachingResponseWrapper(response);
+            view.render(model, request, mockResponse);
+
+            byte[] responseArray = mockResponse.getContentAsByteArray();
+            String responseStr = new String(responseArray, mockResponse.getCharacterEncoding());
+            responce = new AjaxResponce<>("success", null, responseStr);
+        } catch (Exception e) {
+            responce = new AjaxResponce<>("danger", e.getMessage(), null);
+        }
+        return responce;
+    }
+
+    @PostMapping("/book/update")
+    @ResponseBody
+    public AjaxResponce<String> updateMark(HttpServletRequest request, HttpServletResponse response, String id, Double mark, String type,  String bookId, Map<String, Object> model) {
+        AjaxResponce<String> responce;
+        try {
+            UserData user = null;
+            Long readBookId = Long.valueOf(id);
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (!(authentication instanceof AnonymousAuthenticationToken)) {
+                String currentUserName = authentication.getName();
+                user = UserConverter.convertToUserDTO(readerService.findUserByLogin(currentUserName));
+            }
+
+            if (readerService.updateMark(readBookId, mark) == null) {
+                throw new Exception("Невозможно сохранить");
+            }
+
+            List<ReadBookData> books = ReadBookConverter.convertToReadBookDTOList(readerService.getAllReadBooksByUserId(user.getId()));
+
+            View view = this.viewResolver.resolveViewName("readBooks", Locale.ENGLISH);
+            model.put("books", books);
+            ContentCachingResponseWrapper mockResponse = new ContentCachingResponseWrapper(response);
+            view.render(model, request, mockResponse);
+
+            byte[] responseArray = mockResponse.getContentAsByteArray();
+            String responseStr = new String(responseArray, mockResponse.getCharacterEncoding());
+            responce = new AjaxResponce<>("success", "Сохранено", responseStr);
+        } catch (Exception e) {
+            responce = new AjaxResponce<>("danger", e.getMessage(), null);
+        }
+        return responce;
+    }
+
+    @DeleteMapping("/book/delete")
+    @ResponseBody
+    public AjaxResponce<String> deleteBook(HttpServletRequest request, HttpServletResponse response, String id, Map<String, Object> model) {
+        AjaxResponce<String> responce;
+        try {
+            Long bookId = Long.valueOf(id);
+            readerService.deleteReadBook(bookId);
+
+            UserData user = null;
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (!(authentication instanceof AnonymousAuthenticationToken)) {
+                String currentUserName = authentication.getName();
+                user = UserConverter.convertToUserDTO(readerService.findUserByLogin(currentUserName));
+            }
+
+            List<ReadBookData> books = ReadBookConverter.convertToReadBookDTOList(readerService.getAllReadBooksByUserId(user.getId()));
+            View view = this.viewResolver.resolveViewName("readBooks", Locale.ENGLISH);
+            model.put("books", books);
+            ContentCachingResponseWrapper mockResponse = new ContentCachingResponseWrapper(response);
+            view.render(model, request, mockResponse);
+
+            byte[] responseArray = mockResponse.getContentAsByteArray();
+            String responseStr = new String(responseArray, mockResponse.getCharacterEncoding());
+            responce = new AjaxResponce<>("success", "Удалено", responseStr);
+        } catch (Exception e) {
+            responce = new AjaxResponce<>("danger", e.getMessage(), null);
+        }
+
+        return responce;
     }
 }

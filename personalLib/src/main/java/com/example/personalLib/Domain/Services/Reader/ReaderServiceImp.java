@@ -13,6 +13,8 @@ import com.example.personalLib.Domain.Exceptions.UserNotFoundException;
 import com.example.personalLib.Domain.Model.*;
 import com.example.personalLib.Domain.Util.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
@@ -38,6 +40,8 @@ public class ReaderServiceImp implements ReaderService{
     private UserRepository userRepository;
     @Autowired
     private ReadBookRepository readBookRepository;
+//    @Autowired
+//    private BCryptPasswordEncoder passwordEncoder;
 
     @Override
     public Book getBookById(Long id) throws BookNotFoundException{
@@ -58,8 +62,10 @@ public class ReaderServiceImp implements ReaderService{
         UserModel user = userRepository.findById(userId).orElseThrow(()-> new UserNotFoundException(userId));
         BookModel book = bookRepository.findById(bookId).orElseThrow(()-> new BookNotFoundException(bookId));
 
-        return ReviewConverter.convertToReviewDomain(
+        Review review = ReviewConverter.convertToReviewDomain(
                 reviewRepository.save(new ReviewModel(user, book, text, date, mark)));
+        this.updateBookRatingOnChange(book.getId(), null, mark);
+        return review;
     }
 
     @Override
@@ -85,8 +91,10 @@ public class ReaderServiceImp implements ReaderService{
         UserModel user = userRepository.findById(userId).orElseThrow(()-> new UserNotFoundException(userId));
         BookModel book = bookRepository.findById(bookId).orElseThrow(()-> new BookNotFoundException(userId));
 
-        return ReadBookConverter.convertToReadBookDomain(
+        ReadBook readBook = ReadBookConverter.convertToReadBookDomain(
                 readBookRepository.save(new ReadBookModel(book, user, mark)));
+        this.updateBookRatingOnChange(book.getId(), null, mark);
+        return readBook;
     }
 
     @Override
@@ -140,6 +148,19 @@ public class ReaderServiceImp implements ReaderService{
     }
 
     @Override
+    public void deleteReadBook(Long id) throws Exception {
+        final ReadBookModel readBookModel = readBookRepository.findById(id)
+                .orElseThrow(() -> new ReadBookNotFoundException(id));
+        if (!readBookRepository.existsById(id))
+        {
+            throw new BookNotFoundException(id);
+        }
+        readBookRepository.deleteById(id);
+
+        this.updateBookRatingOnChange(readBookModel.getBook().getId(), readBookModel.getMark(), null);
+    }
+
+    @Override
     public void deleteReviews(List<Long> ids) throws Exception {
         for (Long id : ids)
         {
@@ -152,33 +173,50 @@ public class ReaderServiceImp implements ReaderService{
     }
 
     @Override
-    public ReadBook updateMark(Long id, Double mark) throws ReadBookNotFoundException {
+    public ReadBook updateMark(Long id, Double mark) throws ReadBookNotFoundException, BookNotFoundException {
 
         final ReadBookModel readBookModel = readBookRepository.findById(id)
                 .orElseThrow(() -> new ReadBookNotFoundException(id));
 
+        double oldMark = readBookModel.getMark();
         readBookModel.setMark(mark);
 
-        return ReadBookConverter.convertToReadBookDomain(readBookRepository.save(readBookModel));
+        ReadBook book  = ReadBookConverter.convertToReadBookDomain(readBookRepository.save(readBookModel));
+        this.updateBookRatingOnChange(readBookModel.getBook().getId(), oldMark, book.getMark());
+
+        return book;
     }
 
     @Override
-    public Review updateReview(Long id, String text, Double newMark) throws ReviewNotFoundException {
+    public ReadBook getReadBookById(Long id) throws ReadBookNotFoundException {
+        return ReadBookConverter.convertToReadBookDomain(readBookRepository.findById(id)
+                .orElseThrow(() -> new ReadBookNotFoundException(id)));
+    }
+
+    @Override
+    public Review updateReview(Long id, String text, Double newMark) throws ReviewNotFoundException, BookNotFoundException {
 
         final ReviewModel review = reviewRepository.findById(id).orElseThrow(() -> new ReviewNotFoundException(id));
 
+        double oldMark = review.getMark();
         review.setText(text);
         review.setMark(newMark);
-        return ReviewConverter.convertToReviewDomain(reviewRepository.save(review));
+
+        Review reviewNew  = ReviewConverter.convertToReviewDomain(reviewRepository.save(review));
+        this.updateBookRatingOnChange(review.getBook().getId(), oldMark, review.getMark());
+        return reviewNew;
     }
 
     @Override
-    public void deleteReview(Long id) throws ReviewNotFoundException {
+    public void deleteReview(Long id) throws ReviewNotFoundException, BookNotFoundException {
+        ReviewModel review = reviewRepository.findById(id).orElseThrow(() -> new ReviewNotFoundException(id));
         if (!reviewRepository.existsById(id))
         {
             throw new ReviewNotFoundException(id);
         }
         else reviewRepository.deleteById(id);
+
+        this.updateBookRatingOnChange(review.getBook().getId(), review.getMark(), null);
     }
 
     @Override
@@ -212,5 +250,32 @@ public class ReaderServiceImp implements ReaderService{
 
         final UserModel user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
         return UserConverter.convertToUserDomain(user);
+    }
+
+    @Override
+    public void updateBookRatingOnChange(Long id, Double oldMark, Double newMark) throws BookNotFoundException {
+
+        final BookModel book = bookRepository.findById(id).orElseThrow(() -> new BookNotFoundException(id));
+
+        int currentCount = book.getMarkCount();
+        double mark = currentCount * book.getAvgRating();
+
+        double newRating = book.getAvgRating();
+        if (oldMark == null) {
+            mark += newMark;
+            currentCount++;
+        } else if (newMark == null){
+            mark -= oldMark;
+            currentCount--;
+        }
+        else {
+            mark += newMark;
+            mark -= oldMark;
+        }
+        newRating = mark/currentCount;
+
+        book.setAvgRating(newRating);
+        book.setMarkCount(currentCount);
+        bookRepository.save(book);
     }
 }

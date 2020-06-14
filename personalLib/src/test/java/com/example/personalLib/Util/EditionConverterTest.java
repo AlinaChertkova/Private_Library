@@ -1,12 +1,9 @@
 package com.example.personalLib.Util;
 
-import com.example.personalLib.API.Data.EditionData;
 import com.example.personalLib.DB.Models.BookModel;
 import com.example.personalLib.DB.Models.EditionModel;
 import com.example.personalLib.DB.Models.PublishingModel;
-import com.example.personalLib.Domain.Model.Book;
 import com.example.personalLib.Domain.Model.Edition;
-import com.example.personalLib.Domain.Util.BookConverter;
 import com.example.personalLib.Domain.Util.EditionConverter;
 import org.junit.Assert;
 import org.junit.Test;
@@ -27,8 +24,9 @@ public class EditionConverterTest {
         final String description = "Drama";
         final String coverLink = "link";
         final double avgRating = 4.1;
+        final int markCount = 4;
 
-        final BookModel bookModel = new BookModel(ISBN, title, description, coverLink, avgRating);
+        final BookModel bookModel = new BookModel(ISBN, title, description, coverLink, avgRating, markCount);
 
         final String name = "Alpina";
         final String pubDescription = "New pub";
@@ -49,8 +47,8 @@ public class EditionConverterTest {
     @Test
     public void testConvertListModelToListDomain() {
 
-        final BookModel bookModel = new BookModel("book1", "book1", "book1", "book1", 123);
-        final BookModel bookModel2 = new BookModel("book2", "book2", "book2", "book2", 12.45);
+        final BookModel bookModel = new BookModel("book1", "book1", "book1", "book1", 123, 4);
+        final BookModel bookModel2 = new BookModel("book2", "book2", "book2", "book2", 12.45, 4);
 
         final PublishingModel publishingModel = new PublishingModel("publishing1", "publishing1");
         final PublishingModel publishingModel2 = new PublishingModel("publishing2", "publishing2");

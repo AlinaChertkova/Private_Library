@@ -10,6 +10,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +27,9 @@ import java.util.Set;
 public class RegistrationController {
     @Autowired
     private UserRepository userRepositiry;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @GetMapping("/registration")
     public String index(Map<String, Object> model) {
@@ -43,7 +48,7 @@ public class RegistrationController {
 
             UserModel user = new UserModel();
             user.setActive(true);
-            user.setPassword(password);
+            user.setPassword(passwordEncoder.encode(password));
             user.setLogin(username);
             user.setName(name);
             Set<Role> r  = new HashSet<>();

@@ -8,7 +8,7 @@
             <h5 class="modal-title" id="exampleModalLabel">${title} <span class="user-name">${review.getUser().login}</span></h5>
           </div>
         </div>
-      <form action="${path}" method="post">
+      <form class="review-form">
         <div class="modal-body">
           <span>Оценка:  </span>
             <#list 1..10 as x>
@@ -24,10 +24,13 @@
           <textarea class="form-control review-text-area mt-3" name = "text" id="review-text" rows="14"required>${review.getText()}</textarea>
           <input type="hidden" name="bookId" value="${bookId}">
           <input type="hidden" name="id" value="${review.getId()}">
+          <input type="hidden" name="type" value="${type}">
         </div>
         <div class="modal-footer">
-          <input type="submit" class="btn delete-btn" formaction="/review/delete" value="Удалить"/>
-          <input type="submit" class="btn add-btn" value="Сохранить"/>
+            <#if type != "user-edit">
+                <input type="submit" class="btn delete-btn"  formaction="/review/delete" method="delete" value="Удалить"/>
+            </#if>
+          <input type="submit" class="btn add-btn" formaction="${path}" method="post"  value="Сохранить" />
         </div>
       </form>
     </div>

@@ -55,7 +55,7 @@ $(document).on('click', '.review-btn', function (event){
         });
 });
 
-$(document).on('click', '.add-btn', function (event){
+$(document).on('click', '.js-add-btn', function (event){
     var el = $(this);
     var row = el.closest('.row');
 	$.ajax({
@@ -72,8 +72,6 @@ $(document).on('click', '.add-btn', function (event){
                     var modal = document.getElementById("reviewModalContent");
                     modal.innerHTML = result.data;
                     $("#reviewModal").modal('show');
-
-                    setAlert(result.message, result.status);
                 } else {
                     setAlert(result.message, result.status);
                 }
@@ -85,3 +83,40 @@ $(document).on('click', '.add-btn', function (event){
         });
 });
 
+$(document).on('submit', '.review-form', function(e) {
+    e.preventDefault();
+    var form = $(this);
+    var submitter = $(e.originalEvent.submitter);
+    var url = submitter.attr('formaction');
+    var type = submitter.attr('method');
+
+    $.ajax({
+           type: type,
+           url: url,
+           data: form.serialize(),
+           success: function(data)
+           {
+                $('#review-block').html(data.data);
+                $(".modal").modal('hide');
+                setAlert(data.message, data.status);
+           }
+         });
+});
+
+$(document).on('submit', '.book-form', function(e) {
+    e.preventDefault();
+    var form = $(this);
+    var url = form.attr('action');
+    var type = form.attr('method');
+
+    $.ajax({
+           type: type,
+           url: url,
+           data: form.serialize(),
+           success: function(data)
+           {
+                $(".modal").modal('hide');
+                setAlert(data.message, data.status);
+           }
+         });
+});

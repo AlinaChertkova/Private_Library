@@ -1,11 +1,10 @@
-.container {
+/*.container {
 	max-width: 1140px;
-}
+}*/
 
 #layer1 {
-    width: 100%; /* Ширина первого слоя */
-    padding: 10px; /* Поля вокруг текста */
-    /*background: #78b97f66; *//* Цвет фона */
+    width: 100%;
+    padding: 10px;
    }
 
 nav {
@@ -41,17 +40,6 @@ nav {
 .nav-link {
 	color: #000;
 }
-
-
-/*.nav-tabs > a {
-    float:none;
-    display:inline-block;
-    zoom:1;
-}
-
-.nav-tabs {
-    text-align:center;
-}*/
 
 .my-mark {
     color: yellow;
@@ -103,7 +91,3 @@ nav {
     background-color: #78b97f;
 	border-color: #78b97f;
 }
-
-/*.review-cover-im {
-    margin-top: 50px;
-}*/

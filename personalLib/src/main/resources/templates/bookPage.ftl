@@ -41,7 +41,7 @@
             ${book.description}
           </div>
           <div class="mt-4">
-            <input type="button" value="Добавить" data-type="mark" class="btn add-btn">
+            <input type="button" value="Добавить" data-type="mark" class="btn js-add-btn add-btn">
             <input type="button" value="Написать рецензию" data-type="add" class="btn review-btn">
 
           </div>
@@ -60,7 +60,7 @@
 
         <div class="row">
             <h4 class="review-title my-4">Рецензии пользователей</h4>
-            <div class="review-block">
+            <div class="review-block" id="review-block">
                 <#include "reviewBlock.ftl">
             </div>
         </div>

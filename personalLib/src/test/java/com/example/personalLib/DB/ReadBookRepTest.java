@@ -47,7 +47,7 @@ public class ReadBookRepTest {
         final String coverLink = "link";
         final double avgRating = 4.1;
 
-        final BookModel bookModel = new BookModel(ISBN, title, description, coverLink, avgRating);
+        final BookModel bookModel = new BookModel(ISBN, title, description, coverLink, avgRating, 2);
         final BookModel savedBook = bookRepository.save(bookModel);
 
         final ReadBookModel readBook = new ReadBookModel(bookModel, userModel, 12.3);
@@ -83,7 +83,7 @@ public class ReadBookRepTest {
         final String coverLink = "link";
         final double avgRating = 4.1;
 
-        final BookModel bookModel = new BookModel(ISBN, title, description, coverLink, avgRating);
+        final BookModel bookModel = new BookModel(ISBN, title, description, coverLink, avgRating, 2);
         final BookModel savedBook = bookRepository.save(bookModel);
 
         final ReadBookModel readBook = new ReadBookModel(bookModel, userModel, 12.3);
@@ -115,10 +115,10 @@ public class ReadBookRepTest {
         final String coverLink = "link";
         final double avgRating = 4.1;
 
-        final BookModel bookModel = new BookModel(ISBN, title, bookDescription, coverLink, avgRating);
+        final BookModel bookModel = new BookModel(ISBN, title, bookDescription, coverLink, avgRating, 2);
         final BookModel savedBook = bookRepository.save(bookModel);
 
-        final BookModel bookModel2 = new BookModel("new ISBN", "new title", "new description", "new link", 123.45);
+        final BookModel bookModel2 = new BookModel("new ISBN", "new title", "new description", "new link", 123.45, 2);
         final BookModel savedBook2 = bookRepository.save(bookModel2);
 
         //Save publishing

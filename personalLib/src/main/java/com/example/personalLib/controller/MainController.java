@@ -34,6 +34,7 @@ public class MainController {
     @GetMapping("/search")
     public String login(String searchParam, Map<String, Object> model) {
         List<BookData> books = BookConverter.convertToBookDTOList(readerService.getAllBooks());
+        searchParam = searchParam.trim();
         if (searchParam != null && !searchParam.isEmpty()) {
             books = BookConverter.convertToBookDTOList(readerService.getBooksByTitle(searchParam));
             List<BookData> books2 = BookConverter.convertToBookDTOList(readerService.getBooksByAuthorName(searchParam));

@@ -1,16 +1,12 @@
 package com.example.personalLib.DB.Models;
 
 
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import org.hibernate.annotations.Cache;
 
 @Entity
 @Table(name = "Books")
@@ -35,8 +31,11 @@ public class BookModel {
     @Column(name = "cover", nullable = false)
     private String coverLink;
 
-    @Column(name = "avgRating", nullable = false)
+    @Column(name = "avgRating", columnDefinition="default '0'")
     private double avgRating;
+
+    @Column(name = "markCount", columnDefinition="int not null default 0")
+    private int markCount;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "book")
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -77,12 +76,13 @@ public class BookModel {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<EditionModel> bookEditions = new ArrayList<>();
 
-    public BookModel(String isbn, String title, String description, String coverLink, double avgRating) {
+    public BookModel(String isbn, String title, String description, String coverLink, double avgRating, int markCount) {
         this.isbn = isbn;
         this.title = title;
         this.description = description;
         this.coverLink = coverLink;
         this.avgRating = avgRating;
+        this.markCount = markCount;
     }
 
     public Long getId() {
@@ -129,8 +129,16 @@ public class BookModel {
         return avgRating;
     }
 
+    public int getMarkCount() {
+        return markCount;
+    }
+
     public void setAvgRating(double avgRating) {
         this.avgRating = avgRating;
+    }
+
+    public void setMarkCount(int markCount) {
+        this.markCount = markCount;
     }
 
     public List<ReviewModel> getBookReviews() {

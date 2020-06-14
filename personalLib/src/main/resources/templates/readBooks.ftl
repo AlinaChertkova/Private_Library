@@ -22,8 +22,16 @@
                         <span>Средняя оценка: ${book.getBook().getAvgRating()} <i class="fa fa-star" aria-hidden="true"></i></span>
                     </dev>
                     <div class="mt-4">
-                        <input type="button" value="Изменить" data-type="change-book" class="btn change-btn">
-                        <input type="button" value="Удалить" data-type="delete-book" class="btn delete-btn">
+                        <input type="button" value="Изменить"
+                            data-id="${book.getId()}"
+                            data-type="mark"
+                            class="btn change-btn js-change-btn"
+                        >
+                        <input type="button" value="Удалить"
+                            data-id="${book.getId()}"
+                            data-type="delete-book"
+                            class="btn delete-btn js-delete-btn"
+                        >
                     </div>
                   </div>
                 </div>

@@ -8,7 +8,7 @@
             <h5 class="modal-title" id="exampleModalLabel">${title}</h5>
           </div>
         </div>
-      <form action="${path}" method="post">
+      <form class="review-form">
         <div class="modal-body">
           <span>Оценка:  </span>
             <#list 1..10 as x>
@@ -22,7 +22,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
-          <input type="submit" class="btn add-btn" value="Сохранить"/>
+          <input type="submit" class="btn add-btn" formaction="${path}" method="post" value="Сохранить"/>
         </div>
       </form>
     </div>

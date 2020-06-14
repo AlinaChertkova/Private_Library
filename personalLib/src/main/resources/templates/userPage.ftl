@@ -18,6 +18,7 @@
 
 	<link rel="stylesheet" type="text/css" href="/frontend/styles/tabs.css">
 	<link rel="stylesheet" type="text/css" href="/frontend/styles/reviewModal.css">
+	<link rel="stylesheet" type="text/css" href="/frontend/styles/bookPage.css">
 </head>
 <body style="background-color: #f7f7f7;">
     <div id="alerts">
@@ -29,7 +30,6 @@
           <div id="layer1">
             <div>
               <h1>Моя страница</h1>
-              <h3>${user.getLogin()}</h3>
             </div>
             <div class="nav nav-tabs mt-4" id="nav-tab" role="tablist">
               <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Прочитанное</a>
@@ -40,24 +40,30 @@
         </nav>
         <div class="tab-content" id="nav-tabContent">
           <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
-            <div class="books-block">
+            <div class="books-block" id="books-block">
                 <#include "readBooks.ftl">
             </div>
           </div>
           <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
-              <div class="books-block">
+              <div class="review-block" id="review-block">
                   <#include "userReviews.ftl">
               </div>
           </div>
           <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
-            <#include "userInfo.ftl">
+            <div id="info-block">
+                <#include "userInfo.ftl">
+            </div>
           </div>
         </div>
+    </div>
+
+    <div class="modal fade float-center" id="reviewModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div id="reviewModalContent"></div>
     </div>
 </div>
   <script src="/frontend/js/jquery/jquery.min.js"></script>
   <script src="/frontend/bootstrap-4.3.1-dist/js/popper.min.js"></script>
   <script src="/frontend/bootstrap-4.3.1-dist/js/bootstrap.min.js"></script>
-  <script src="js/registration.js"></script>
   <script src="/frontend/js/userPage.js"></script>
+  <script src="/frontend/js/notification.js"></script>
 </body>

@@ -8,16 +8,22 @@
         <h5 class="modal-title" id="exampleModalLabel">${title}</h5>
       </div>
     </div>
-  <form action="${path}" method="post" class="book-form">
+  <form action="/book/update" method="post" class="book-form">
     <div class="modal-body">
       <span>Оценка:  </span>
         <#list 1..10 as x>
             <div class="form-check form-check-inline">
-              <input class="form-check-input" type="radio" name="mark" id="inlineRadio1" value="${x}" required>
+              <input class="form-check-input" type="radio" name="mark" id="inlineRadio1" value="${x}" required
+                <#if book??>
+                    <#if x == book.getMark()>
+                      checked
+                    </#if>
+                </#if>
+              >
               <label class="form-check-label" for="inlineRadio1">${x}</label>
             </div>
         </#list>
-      <input type="hidden" name="bookId" value="${bookId}">
+        <input type="hidden" name="id" value="${book.getId()}">
     </div>
     <div class="modal-footer">
       <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>

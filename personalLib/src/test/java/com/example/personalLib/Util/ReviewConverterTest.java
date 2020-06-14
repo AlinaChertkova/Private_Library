@@ -29,7 +29,7 @@ public class ReviewConverterTest {
         final String coverLink = "link";
         final double avgRating = 4.1;
 
-        final BookModel bookModel = new BookModel(ISBN, title, description, coverLink, avgRating);
+        final BookModel bookModel = new BookModel(ISBN, title, description, coverLink, avgRating, 2);
 
         final String login = "Alina";
         final String name = "Alina";
@@ -70,8 +70,9 @@ public class ReviewConverterTest {
     @Test
     public void testConvertListModelToListDomain() {
 
-        final BookModel bookModel = new BookModel("book1", "book1", "book1", "book1", 123);
-        final BookModel bookModel2 = new BookModel("book2", "book2", "book2", "book2", 12.45);
+        final int markCount = 4;
+        final BookModel bookModel = new BookModel("book1", "book1", "book1", "book1", 123, markCount);
+        final BookModel bookModel2 = new BookModel("book2", "book2", "book2", "book2", 12.45, markCount);
 
         final UserModel userModel = new UserModel("user1", "user1", "user1", LocalDateTime.now());
         Set<Role> r  = new HashSet<>();

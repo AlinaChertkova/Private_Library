@@ -21,10 +21,7 @@ import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
@@ -73,10 +70,10 @@ public class ReviewController {
                 }
                 view = this.viewResolver.resolveViewName("markModal", Locale.ENGLISH);
                 title = "Добавить в прочитанное";
-                path = "/review/mark";
+                path = "/book/mark";
             }
 
-            if (type.equals("edit")) {
+            if (type.equals("edit") || type.equals("user-edit")) {
                 if (UserSecurityUtil.hasUserRole()) {
                     UserData curUser = UserConverter.convertToUserDTO(readerService.findUserByLogin(UserSecurityUtil.getCurrentUserLogin()));
                     Long userId = curUser.getId();
@@ -90,6 +87,7 @@ public class ReviewController {
                 title = "Редактировать рецензию пользователя";
                 path = "/review/update";
                 view = this.viewResolver.resolveViewName("editReviewModalContent", Locale.ENGLISH);
+                model.put("type", type);
             }
             model.put("bookId", bookId);
             model.put("title", title);
@@ -110,7 +108,7 @@ public class ReviewController {
 
     @PostMapping("/review/update")
     @ResponseBody
-    public AjaxResponce<String> updateReview(HttpServletRequest request, HttpServletResponse response, String id, String text, Double mark, String bookId, Map<String, Object> model) {
+    public AjaxResponce<String> updateReview(HttpServletRequest request, HttpServletResponse response, String id, String text, Double mark, String type, String bookId, Map<String, Object> model) {
         AjaxResponce<String> responce;
         try {
             Long reviewId = Long.valueOf(id);
@@ -118,9 +116,24 @@ public class ReviewController {
             if (readerService.updateReview(reviewId, text, mark) == null) {
                throw new Exception("Невозможно обновить");
             }
+            List<ReviewData> reviews = null;
 
-            View view = this.viewResolver.resolveViewName("reviewBlock", Locale.ENGLISH);
-            List<ReviewData> reviews = ReviewConverter.convertToReviewDTOList(readerService.getAllReviewsByBookId(book));
+            String viewName = "reviewBlock";
+            if (type.equals("user-edit")) {
+                viewName = "userReviews";
+                UserData user = null;
+                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+                if (!(authentication instanceof AnonymousAuthenticationToken)) {
+                    String currentUserName = authentication.getName();
+                    user = UserConverter.convertToUserDTO(readerService.findUserByLogin(currentUserName));
+                }
+
+                reviews = ReviewConverter.convertToReviewDTOList(readerService.getAllReviewsByUserId(user.getId()));
+            } else if (type.equals("edit")) {
+                reviews = ReviewConverter.convertToReviewDTOList(readerService.getAllReviewsByBookId(book));
+            }
+            View view = this.viewResolver.resolveViewName(viewName, Locale.ENGLISH);
+
             model.put("reviews", reviews);
 
             ContentCachingResponseWrapper mockResponse = new ContentCachingResponseWrapper(response);
@@ -128,7 +141,7 @@ public class ReviewController {
 
             byte[] responseArray = mockResponse.getContentAsByteArray();
             String responseStr = new String(responseArray, mockResponse.getCharacterEncoding());
-            responce = new AjaxResponce<>("success", "Сохранено", responseStr);
+            responce = new AjaxResponce<>("success", "Успешно сохранено", responseStr);
 
         } catch (Exception e) {
             responce = new AjaxResponce<>("danger", e.getMessage(), null);
@@ -137,7 +150,9 @@ public class ReviewController {
     }
 
     @PostMapping("/review/add")
-    public String addReview(String text, Double mark, String bookId, Map<String, Object> model) {
+    @ResponseBody
+    public AjaxResponce<String> addReview(HttpServletRequest request, HttpServletResponse response, String text, Double mark, String bookId, Map<String, Object> model) {
+        AjaxResponce<String> responce;
         try {
             UserData user = null;
             Long book = Long.valueOf(bookId);
@@ -151,47 +166,51 @@ public class ReviewController {
             if (saved == null) {
                 throw new Exception("Невозможно сохранить");
             }
+
+            View view = this.viewResolver.resolveViewName("reviewBlock", Locale.ENGLISH);
+            List<ReviewData> reviews = ReviewConverter.convertToReviewDTOList(readerService.getAllReviewsByBookId(book));
+            model.put("reviews", reviews);
+
+            ContentCachingResponseWrapper mockResponse = new ContentCachingResponseWrapper(response);
+            view.render(model, request, mockResponse);
+
+            byte[] responseArray = mockResponse.getContentAsByteArray();
+            String responseStr = new String(responseArray, mockResponse.getCharacterEncoding());
+            responce = new AjaxResponce<>("success", "Успешно сохранено", responseStr);
         } catch (Exception e) {
-            String message = e.getMessage();
-            model.put("message", message);
-            return "registration";
+            responce = new AjaxResponce<>("danger", e.getMessage(), null);
         }
-        return "redirect:/book/" + bookId;
+        return responce;
     }
 
-    @PostMapping("/review/delete")
-    public String deleteReview(String id, String bookId, Map<String, Object> model) {
+    @DeleteMapping("/review/delete")
+    @ResponseBody
+    public AjaxResponce<String> deleteReview(HttpServletRequest request, HttpServletResponse response, String id, String bookId, Map<String, Object> model) {
+        AjaxResponce<String> responce;
         try {
             Long reviewId = Long.valueOf(id);
-            readerService.deleteReview(reviewId);
-        } catch (Exception e) {
-            String message = e.getMessage();
-            model.put("message", message);
-            return "registration";
-        }
-        return "redirect:/book/" + bookId;
-    }
-
-    @PostMapping("/review/mark")
-    public String addToList(Double mark, String bookId, Map<String, Object> model) {
-        try {
-            UserData user = null;
             Long book = Long.valueOf(bookId);
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            if (!(authentication instanceof AnonymousAuthenticationToken)) {
-                String currentUserName = authentication.getName();
-                user = UserConverter.convertToUserDTO(readerService.findUserByLogin(currentUserName));
-            }
-            ReadBook saved = readerService.addToList(user.getId(), book, mark);
+            readerService.deleteReview(reviewId);
 
-            if (saved == null) {
-                throw new Exception("Невозможно сохранить");
-            }
+            String viewName = "reviewBlock";
+            List<ReviewData> reviews = ReviewConverter.convertToReviewDTOList(readerService.getAllReviewsByBookId(book));;
+
+            View view = this.viewResolver.resolveViewName(viewName, Locale.ENGLISH);
+
+            model.put("reviews", reviews);
+
+            ContentCachingResponseWrapper mockResponse = new ContentCachingResponseWrapper(response);
+            view.render(model, request, mockResponse);
+
+            byte[] responseArray = mockResponse.getContentAsByteArray();
+            String responseStr = new String(responseArray, mockResponse.getCharacterEncoding());
+            responce = new AjaxResponce<>("success", "Рецензия успешно удалена", responseStr);
         } catch (Exception e) {
-            String message = e.getMessage();
-            model.put("message", message);
-            return "registration";
+            responce = new AjaxResponce<>("danger", e.getMessage(), null);
         }
-        return "redirect:/book/" + bookId;
+
+        return responce;
     }
+
+
 }

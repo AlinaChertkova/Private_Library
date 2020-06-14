@@ -104,8 +104,8 @@ public class GenreRepTest {
         final String coverLink = "link";
         final double avgRating = 4.1;
 
-        final BookModel bookModel = new BookModel(ISBN, title, description, coverLink, avgRating);
-        final BookModel bookModel2 = new BookModel("test", "test", "test", "test", 12.3);
+        final BookModel bookModel = new BookModel(ISBN, title, description, coverLink, avgRating, 2);
+        final BookModel bookModel2 = new BookModel("test", "test", "test", "test", 12.3, 2);
 
         final GenreModel genre1 = new GenreModel( "Humor");
         GenreModel sevedGenre1 = genreRepository.save(genre1);

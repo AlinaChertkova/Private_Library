@@ -26,6 +26,8 @@ public interface ReaderService {
      */
     Book getBookById (Long id) throws BookNotFoundException;
 
+    ReadBook getReadBookById (Long id) throws ReadBookNotFoundException;
+
     /**
      * Получить список всех книг
      * @return Список всех книг
@@ -117,6 +119,8 @@ public interface ReaderService {
      */
     void deleteReadBooks (List<Long> ids) throws Exception;
 
+    void deleteReadBook(Long id) throws Exception;
+
     void deleteReviews (List<Long> ids) throws Exception;
 
     /**
@@ -124,7 +128,7 @@ public interface ReaderService {
      * @param mark новая оценка
      * @return обновленная запись
      */
-    ReadBook updateMark(Long id, Double mark) throws ReadBookNotFoundException;
+    ReadBook updateMark(Long id, Double mark) throws ReadBookNotFoundException, BookNotFoundException;
 
     /**
      * Обновить рецензию
@@ -134,14 +138,14 @@ public interface ReaderService {
      * @return обновленная рецензия
      * @throws ReviewNotFoundException
      */
-    Review updateReview(Long id, String text, Double newMark) throws ReviewNotFoundException;
+    Review updateReview(Long id, String text, Double newMark) throws ReviewNotFoundException, BookNotFoundException;
 
     /**
      * Удалить рецензию
      * @param id идентификатор рецензии
      * @throws ReviewNotFoundException
      */
-    void deleteReview(Long id) throws ReviewNotFoundException;
+    void deleteReview(Long id) throws ReviewNotFoundException, BookNotFoundException;
 
     /**
      * Получить все рецензии пользователя по идентиф
@@ -170,4 +174,6 @@ public interface ReaderService {
     void deleteUser(Long id) throws UserNotFoundException;
 
     User getUserById(Long id) throws UserNotFoundException;
+
+    void updateBookRatingOnChange(Long id, Double oldMark, Double newMark) throws BookNotFoundException;
 }

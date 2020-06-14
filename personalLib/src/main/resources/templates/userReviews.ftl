@@ -6,8 +6,16 @@
               <div class="mt-4 ml-5">
                 <img src="/frontend/images/${review.getBook().getCoverLink()}" class="cover-im" alt="image">
                 <dev class="mt-4">
-                    <input type="button" value="Изменить" data-type="change-book" class="btn change-btn ml-4 mt-4">
-                    <input type="button" value="Удалить" data-type="delete-book" class="btn delete-btn ml-4 mt-2">
+                    <input type="button" value="Изменить"
+                        class="btn js-user-review-edit change-btn ml-4 mt-4"
+                        data-book="${review.getBook().getId()}"
+                        data-type="user-edit"
+                        data-id="${review.getId()}"
+                    >
+                    <input type="button" value="Удалить"
+                        data-id="${review.getId()}"
+                        class="btn js-delete-review-btn delete-btn ml-4 mt-2"
+                    >
                 </dev>
                </div>
               </div>

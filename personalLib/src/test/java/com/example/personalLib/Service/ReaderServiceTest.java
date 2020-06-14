@@ -74,10 +74,11 @@ public class ReaderServiceTest {
         final String coverLink = "link";
         final double avgRating = 4.1;
 
-        final BookModel bookModel = new BookModel(ISBN, title, description, coverLink, avgRating);
+        final int markCount = 4;
+        final BookModel bookModel = new BookModel(ISBN, title, description, coverLink, avgRating, markCount);
         bookModel.setId(1L);
 
-        final BookModel bookModel2 = new BookModel("test", "June", "test", "test", 12.52);
+        final BookModel bookModel2 = new BookModel("test", "June", "test", "test", 12.52, markCount);
         bookModel2.setId(2L);
 
         Mockito.when(bookRepository.findById(1L)).thenReturn(Optional.of(bookModel));

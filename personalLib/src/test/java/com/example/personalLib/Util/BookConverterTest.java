@@ -36,7 +36,7 @@ public class BookConverterTest {
         final AuthorModel authorModel2 = new AuthorModel("test", "test");
         authorModel.setId(2L);
 
-        final BookModel bookModel = new BookModel(ISBN, title, description, coverLink, avgRating);
+        final BookModel bookModel = new BookModel(ISBN, title, description, coverLink, avgRating, 2);
         bookModel.setId(1L);
         bookModel.setBookAuthors(Arrays.asList(authorModel, authorModel2));
 
@@ -77,11 +77,11 @@ public class BookConverterTest {
         authorModel.setId(4L);
 
         List<BookModel> models = new ArrayList<>();
-        BookModel madel = new BookModel("test1", "test1", "test1", "test1", 123);
+        BookModel madel = new BookModel("test1", "test1", "test1", "test1", 123, 2);
         madel.setBookAuthors(Arrays.asList(authorModel, authorModel2));
         models.add(madel);
 
-        BookModel madel2 = new BookModel("test2", "test2", "test2", "test2", 123 );
+        BookModel madel2 = new BookModel("test2", "test2", "test2", "test2", 123, 2);
         madel2.setBookAuthors(Arrays.asList(authorModel3, authorModel4));
         models.add(madel2);
 
