@@ -85,24 +85,9 @@ public class BookController {
     public AjaxResponce<String> getModal(HttpServletRequest request, HttpServletResponse response, String id, Double mark, String type,  String bookId, Map<String, Object> model) {
         AjaxResponce<String> responce;
         try {
-//            UserData user = null;
-//            Long book = Long.valueOf(bookId);
             Long readBookId = Long.valueOf(id);
-//            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//            if (!(authentication instanceof AnonymousAuthenticationToken)) {
-//                String currentUserName = authentication.getName();
-//                user = UserConverter.convertToUserDTO(readerService.findUserByLogin(currentUserName));
-//            }
 
             ReadBookData book = ReadBookConverter.convertToReadBookDTO(readerService.getReadBookById(readBookId));
-
-//            if (readerService.updateMark(readBookId, mark) == null) {
-//                throw new Exception("Невозможно сохранить");
-//            }
-
-//            List<ReadBookData> books = ReadBookConverter.convertToReadBookDTOList(readerService.getAllReadBooksByUserId(user.getId()));
-//            ReadBook saved = readerService.addToList(user.getId(), book, mark);
-
             View view = this.viewResolver.resolveViewName("editMark", Locale.ENGLISH);
             model.put("book", book);
             model.put("title", "Редакторовать оценку");

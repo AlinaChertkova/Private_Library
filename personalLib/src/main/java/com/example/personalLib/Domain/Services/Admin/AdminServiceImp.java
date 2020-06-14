@@ -56,27 +56,6 @@ public class AdminServiceImp implements AdminService {
                 authorRepository.save(new AuthorModel(description, name)));
     }
 
-   /* @Override
-    public Book addBook(String isbn, String title, String description, String coverLink, List<AuthorModel> authors) {
-
-        BookModel model = new BookModel(isbn, title, description,  coverLink, 0);
-        model.setBookAuthors(authors);
-        return BookConverter.convertToBookDomain(bookRepository.save(model));
-    }
-
-    @Override
-    public Book updateBook(Long id, String isbn, String title, String description, String coverLink, List<AuthorModel> authors, double avgRating) throws BookNotFoundException {
-
-        final BookModel book = bookRepository.findById(id).orElseThrow(() -> new BookNotFoundException(id));
-
-        book.setISBN(isbn);
-        book.setTitle(title);
-        book.setCoverLink(coverLink);
-        book.setBookAuthors(authors);
-        book.setDescription(description);
-        return BookConverter.convertToBookDomain(bookRepository.save(book));
-    }*/
-
     @Override
     public Author updateAuthor(Long id, String description, String name) throws AuthorNotFoundException {
         final AuthorModel author = authorRepository.findById(id).orElseThrow(() -> new AuthorNotFoundException(id));
@@ -102,19 +81,12 @@ public class AdminServiceImp implements AdminService {
         return GenreConverter.convertToGenreDomain(
                 genreRepository.save(new GenreModel(name)));
     }
-
-    @Override
-    public List<Long> getUserStatistics(Integer year) {
-        List<Object[]> list = new ArrayList<>();
-        //list = userRepository.getRegistrationStatistics(year);
-        List<Long> resList = new ArrayList<Long>(Collections.nCopies(12, 0L));
-               // (0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L);
-        for (int i = 0; i < list.size(); i++)
-        {
-            Object[] in = list.get(i);
-            resList.set((Integer) in[1] - 1, (Long)in[0] );
-        }
-
-        return resList;
-    }
 }
+
+
+
+
+
+
+
+

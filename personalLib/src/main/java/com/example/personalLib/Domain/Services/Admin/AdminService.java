@@ -72,11 +72,4 @@ public interface AdminService {
      * @return жанр
      */
     Genre addGenre (String name);
-
-    /**
-     * Получить статистику ргистраций по месяцам
-     * @param year год
-     * @return список значений
-     */
-    List<Long> getUserStatistics(Integer year);
 }

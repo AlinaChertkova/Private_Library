@@ -173,7 +173,7 @@ $(document).on('submit', '.user-info-form', function(e) {
 
     $.ajax({
            type: 'put',
-           url: "/user/review/update",
+           url: "/user/update",
            data: form.serialize(),
            success: function(data)
            {

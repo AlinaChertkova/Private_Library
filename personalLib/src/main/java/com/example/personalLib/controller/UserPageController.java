@@ -43,7 +43,7 @@ public class UserPageController {
     private AuthenticationManager authManager;
 
     @GetMapping("/mypage")
-    public String greeting(Map<String, Object> model) {
+    public String getMypage(Map<String, Object> model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication instanceof AnonymousAuthenticationToken) {
@@ -100,9 +100,9 @@ public class UserPageController {
         return responce;
     }
 
-    @PutMapping("/user/review/update")
+    @PutMapping("/user/update")
     @ResponseBody
-    public AjaxResponce<String> updateReview(HttpServletRequest request, HttpServletResponse response, String name, String username, String password, Map<String, Object> model) {
+    public AjaxResponce<String> updateUser(HttpServletRequest request, HttpServletResponse response, String name, String username, String password, Map<String, Object> model) {
         AjaxResponce<String> responce;
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         try {
