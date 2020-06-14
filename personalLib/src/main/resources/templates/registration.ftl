@@ -29,9 +29,9 @@
 
 					<input type="text" id="name" name="name" class="form-control input-field" placeholder="имя" required>
 
-					<input type="password" id="password input-field" name="password" class="form-control" placeholder="пароль" required>
+					<input type="password" id="password input-field" name="password" class="form-control input-field" placeholder="пароль" required>
 
-					<input type="password" id="rep-password input-field" name="password_rep" class="form-control" placeholder="повторите пароль" required>
+					<input type="password" id="rep-password input-field" name="password_rep" class="form-control input-field" placeholder="повторите пароль" required>
 
 					<div class="float-right flex-column">
 						<div class="enter-link">

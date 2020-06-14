@@ -1,7 +1,7 @@
 $(document).on('click', '.js-change-password', function (event){
     var block = document.getElementById("changePasswordBlock");
-    var fields = '<input type="password" id="password" name="password" class="form-control" placeholder="пароль" required>' +
-        '<input type="password" id="rep-password" name="password_rep" class="form-control" placeholder="повторите пароль" required>';
+    var fields = '<input type="password" id="password" name="password" class="form-control input-field" placeholder="пароль" required>' +
+        '<input type="password" id="rep-password" name="password_rep" class="form-control input-field" placeholder="повторите пароль" required>';
     block.innerHTML = fields;
 
     var link = $("#changePassword");

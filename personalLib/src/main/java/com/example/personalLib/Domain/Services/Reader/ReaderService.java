@@ -166,13 +166,6 @@ public interface ReaderService {
      */
     User updateUser(Long id, String login, String name, String password) throws UserNotFoundException;
 
-    /**
-     * Удалить пользователя
-     * @param id идентификатор пользователя
-     * @throws UserNotFoundException
-     */
-    void deleteUser(Long id) throws UserNotFoundException;
-
     User getUserById(Long id) throws UserNotFoundException;
 
     void updateBookRatingOnChange(Long id, Double oldMark, Double newMark) throws BookNotFoundException;

@@ -31,7 +31,7 @@ public class BookModel {
     @Column(name = "cover", nullable = false)
     private String coverLink;
 
-    @Column(name = "avgRating", columnDefinition="default '0'")
+    @Column(name = "avgRating", columnDefinition="double not null default 0")
     private double avgRating;
 
     @Column(name = "markCount", columnDefinition="int not null default 0")

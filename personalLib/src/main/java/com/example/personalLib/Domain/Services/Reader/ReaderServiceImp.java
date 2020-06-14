@@ -40,8 +40,6 @@ public class ReaderServiceImp implements ReaderService{
     private UserRepository userRepository;
     @Autowired
     private ReadBookRepository readBookRepository;
-//    @Autowired
-//    private BCryptPasswordEncoder passwordEncoder;
 
     @Override
     public Book getBookById(Long id) throws BookNotFoundException{
@@ -239,13 +237,6 @@ public class ReaderServiceImp implements ReaderService{
     }
 
     @Override
-    public void deleteUser(Long id) throws UserNotFoundException {
-        final UserModel user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
-
-        userRepository.deleteById(id);
-    }
-
-    @Override
     public User getUserById(Long id) throws UserNotFoundException {
 
         final UserModel user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
@@ -260,7 +251,6 @@ public class ReaderServiceImp implements ReaderService{
         int currentCount = book.getMarkCount();
         double mark = currentCount * book.getAvgRating();
 
-        double newRating = book.getAvgRating();
         if (oldMark == null) {
             mark += newMark;
             currentCount++;
@@ -272,7 +262,7 @@ public class ReaderServiceImp implements ReaderService{
             mark += newMark;
             mark -= oldMark;
         }
-        newRating = mark/currentCount;
+        double newRating = mark/currentCount;
 
         book.setAvgRating(newRating);
         book.setMarkCount(currentCount);
