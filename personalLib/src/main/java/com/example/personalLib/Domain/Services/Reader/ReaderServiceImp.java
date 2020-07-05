@@ -232,7 +232,9 @@ public class ReaderServiceImp implements ReaderService{
 
         user.setLogin(login);
         user.setName(name);
-        user.setPassword(password);
+        if (password != null) {
+            user.setPassword(password);
+        }
         return UserConverter.convertToUserDomain(userRepository.save(user));
     }
 

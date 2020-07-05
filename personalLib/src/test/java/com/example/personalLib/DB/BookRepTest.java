@@ -113,8 +113,6 @@ public class BookRepTest {
         final double avgRating = 4.1;
 
         final BookModel bookModel = new BookModel(ISBN, title, description, coverLink, avgRating, 4);
-
-
         //Save publishing
         final String name = "Alpina";
         final String pubDescription = "New pub";
@@ -128,13 +126,6 @@ public class BookRepTest {
 
         final EditionModel editoin2 = new EditionModel(publishingModel, 2005, "test_link2", "Roza vetrov", bookModel);
         final EditionModel sevedEdition2 = editionRepository.save(editoin);
-
-
-        /*Optional<BookModel> optSelectedValueUpd = bookRepository.findById(saved.getId());
-
-        Assert.assertTrue(optSelectedValueUpd.isPresent());
-
-        final BookModel selectedValueUpd = optSelectedValueUpd.get();*/
 
         List<EditionModel> mySet = new ArrayList<>();
         EditionModel [] myArray = {sevedEdition, sevedEdition2};
@@ -190,7 +181,6 @@ public class BookRepTest {
 
     @Test
     public void testBookEditionRelations() {
-        //Создадим книгу
         final String ISBN = "978-5-389-02467-0";
         final String title = "June";
         final String description = "Drama";
@@ -219,19 +209,6 @@ public class BookRepTest {
         final EditionModel sevedEdition2 = editionRepository.save(editoin2);
 
         Assert.assertEquals(editionRepository.findByBookId(saved.getId()).size(), 2);
-
-    }
-
-    @Test
-    public void testBookReviewRelations() {
-
-        BookModel book = bookRepository.save(new BookModel("122222", "Rrrrrrr", "fdffdfdf", "link", 1234, 4));
-       // UserModel user = userRepository.save(new UserModel("Alina", "User", "Al", "111111", LocalDateTime.now()));
-        //Long userId, Long bookId, String text, LocalDateTime date, double mark
-        //createReview(user.getId(), book.getId(), "Aaaaaaaa", LocalDateTime.now(), 122 );
-        //createReview(user.getId(), book.getId(), "Bbbbbbbbb", LocalDateTime.now(), 122 );
-        //(String isbn, String title, String description, String coverLink, double avgRating)
-        bookRepository.save(new BookModel("122222", "Rrrrrrr", "fdffdfdf", "link", 1234, 4));
 
     }
 
@@ -334,21 +311,5 @@ public class BookRepTest {
         Assert.assertEquals(bookRepository.findDistinctByBookAuthorsNameContainingIgnoreCase("Alina").size(), 2);
         Assert.assertEquals(bookRepository.findDistinctByBookAuthorsNameContainingIgnoreCase("Chertkova").size(), 1);
     }
-
-    @Test
-    public void testCash(){
-//        CacheManager cacheManager = new CacheManager(new Configuration().name("EhCacheCacheTests").defaultCache(new CacheConfiguration("default", 100)));
-//        net.sf.ehcache.Cache nativeCache = new net.sf.ehcache.Cache(new CacheConfiguration("com.example.personalLib.DB.Models.BookModel", 100));
-//        cacheManager.addCache(nativeCache);
-
-       /* BookModel foo = new BookModel();
-
-        bookRepository.findById(31L).get();
-        List<CacheManager> cash = CacheManager.ALL_CACHE_MANAGERS;
-        int size = cash.get(0)
-                .getCache("com.example.personalLib.DB.Models.BookModel").getSize();
-        Assert.assertTrue(size  > 0 );*/
-    }
-
 }
 

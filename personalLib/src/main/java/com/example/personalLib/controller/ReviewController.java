@@ -12,7 +12,6 @@ import com.example.personalLib.Domain.Services.Reader.ReaderService;
 import com.example.personalLib.Domain.Util.ReviewConverter;
 import com.example.personalLib.Domain.Util.UserConverter;
 import com.example.personalLib.Security.UserSecurityUtil;
-import com.vaadin.flow.component.notification.Notification;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import org.springframework.beans.factory.annotation.Autowired;

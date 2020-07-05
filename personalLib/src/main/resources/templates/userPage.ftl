@@ -18,11 +18,11 @@
 
 	<link rel="stylesheet" type="text/css" href="/frontend/styles/tabs.css">
 	<link rel="stylesheet" type="text/css" href="/frontend/styles/reviewModal.css">
-	<link rel="stylesheet" type="text/css" href="/frontend/styles/bookPage.css">
+	<!--<link rel="stylesheet" type="text/css" href="/frontend/styles/bookPage.css">-->
 </head>
 <body style="background-color: #f7f7f7;">
     <div id="alerts">
-    </dev>
+    </div>
     <#include "navbar.ftl">
   <div class="container">
     <div class="row">
@@ -65,5 +65,6 @@
   <script src="/frontend/bootstrap-4.3.1-dist/js/popper.min.js"></script>
   <script src="/frontend/bootstrap-4.3.1-dist/js/bootstrap.min.js"></script>
   <script src="/frontend/js/userPage.js"></script>
+  <!--<script src="/frontend/js/registration.js"></script>-->
   <script src="/frontend/js/notification.js"></script>
 </body>

@@ -42,6 +42,9 @@ public class UserPageController {
     @Autowired
     private AuthenticationManager authManager;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @GetMapping("/mypage")
     public String getMypage(Map<String, Object> model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -113,8 +116,8 @@ public class UserPageController {
                 throw new Exception("Пользователь в таким логином уже существует");
             }
 
-            if (password == null) {
-                password = user.getPassword();
+            if (password != null) {
+                password =  passwordEncoder.encode(password);
             }
             readerService.updateUser(user.getId(), username, name, password);
             user = UserConverter.convertToUserDTO(readerService.findUserByLogin(UserSecurityUtil.getCurrentUserLogin()));
